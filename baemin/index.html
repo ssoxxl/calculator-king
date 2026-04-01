@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>배달의민족 수수료 계산기 2025 — 실수령액 계산 | 계산왕</title>
+<meta name="description" content="2025년 배달의민족 수수료 계산기. 배민1플러스·가게배달·포장주문별 중개수수료와 배달비를 반영한 실수령액을 계산합니다.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--text:#1a1a18;--muted:#888880;--teal:#00bcd4;--teal-light:#e0f7fa;--red:#dc2626;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+header{background:var(--surface);border-bottom:2px solid var(--text);padding:0 24px;height:56px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:900;display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--text);}
+.logo-badge{background:var(--text);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.back-btn{margin-left:auto;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;text-decoration:none;}
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px 60px;}
+.calc-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;overflow:hidden;}
+.card-hero{padding:28px 28px 20px;border-bottom:1px solid var(--border);}
+.card-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;margin-bottom:10px;background:var(--teal-light);color:#007c8a;text-transform:uppercase;}
+.card-hero h1{font-size:24px;font-weight:900;margin-bottom:6px;}
+.card-hero p{font-size:14px;color:var(--muted);}
+.card-body{padding:24px 28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select{width:100%;padding:11px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-family:inherit;outline:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tip{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;}
+.btn-calc{width:100%;padding:13px;border:none;border-radius:9px;background:#007c8a;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+.result-box{margin-top:16px;padding:18px;border-radius:10px;border:1.5px solid #00bcd4;background:var(--teal-light);display:none;}
+.result-box.show{display:block;}
+.result-label{font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:8px;color:#007c8a;}
+.result-main{font-size:30px;font-weight:900;margin-bottom:8px;color:#007c8a;}
+.result-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.result-row:last-child{border:none;}
+.result-row strong{font-weight:700;}
+.desc-section{padding:24px 28px;border-top:1px solid var(--border);background:var(--surface2);}
+.desc-section h2{font-size:15px;font-weight:700;margin-bottom:12px;}
+.desc-section p{font-size:13px;color:#555;line-height:1.8;margin-bottom:14px;}
+.faq-item{margin-bottom:14px;}
+.faq-q{font-size:13px;font-weight:700;margin-bottom:4px;}
+.faq-a{font-size:13px;color:#555;line-height:1.7;padding-left:12px;border-left:2px solid var(--border);}
+.related{padding:20px 28px 28px;}
+.related h2{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--muted);}
+.related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.related-btn{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;font-weight:600;text-decoration:none;display:block;text-align:center;}
+footer{background:var(--text);color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;}
+footer strong{color:#fff;}
+@media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.related-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">👑</span></a><a href="../" class="back-btn">← 전체 계산기</a></header>
+<div class="wrap"><div class="calc-card">
+  <div class="card-hero">
+    <span class="card-tag">커머스</span>
+    <h1>배달의민족 수수료 계산기</h1>
+    <p>2025년 기준 배민1플러스·가게배달·포장주문별 중개수수료 및 실수령액 계산</p>
+  </div>
+  <div class="card-body">
+    <div class="field">
+      <label>주문 금액 (원)</label>
+      <input type="number" id="price" placeholder="25,000">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>주문 유형</label>
+        <select id="type" onchange="updateFields()">
+          <option value="baemin1_high">배민1플러스 — 상위35% (7.8%)</option>
+          <option value="baemin1_mid">배민1플러스 — 35~80% (6.8%)</option>
+          <option value="baemin1_low">배민1플러스 — 하위20% (2.0%)</option>
+          <option value="open">가게배달 오픈리스트 (6.8%)</option>
+          <option value="pickup">포장/픽업 (6.8%)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>점주부담 배달비 (원)</label>
+        <input type="number" id="delivery" placeholder="2500" value="2500">
+      </div>
+    </div>
+    <div class="tip">※ 2025년 기준. 중개수수료 부가세(10%) 별도. 포장주문은 2025.4.14부터 6.8% 부과.</div>
+    <button class="btn-calc" onclick="calc()">계산하기</button>
+    <div class="result-box" id="result">
+      <div class="result-label">실수령액</div>
+      <div class="result-main" id="main"></div>
+      <div id="detail"></div>
+    </div>
+  </div>
+  <div class="desc-section">
+    <h2>📌 배달의민족 수수료 구조 (2025년 기준)</h2>
+    <p>배민1플러스 요금제는 매출 구간에 따라 <strong>2.0%~7.8%</strong> 차등 적용됩니다. 2025년 4월 14일부터 포장(픽업) 주문에도 6.8% 중개수수료가 부과됩니다.</p>
+    <div class="faq-item">
+      <div class="faq-q">Q. 배민1플러스 매출 등급은 어떻게 결정되나요?</div>
+      <div class="faq-a">배민 앱 내 동일 카테고리 매장 중 매출 순위로 결정됩니다. 상위 35%는 7.8%, 35~80%는 6.8%, 하위 20%는 2.0%가 적용됩니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Q. 배달비는 점주가 모두 부담하나요?</div>
+      <div class="faq-a">배민1플러스의 경우 지역·매출등급에 따라 점주부담 배달비가 1,900~3,400원으로 책정됩니다. 소비자 부담 배달비와 다릅니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Q. 1만원 이하 주문은 수수료 면제인가요?</div>
+      <div class="faq-a">업주단체와 합의된 내용이지만, 2025년 기준 시행 시점·방식이 아직 미확정입니다. 시행 전까지는 동일 수수료가 적용됩니다.</div>
+    </div>
+  </div>
+  <div class="related"><h2>관련 계산기</h2><div class="related-grid">
+    <a href="../smartstore/" class="related-btn">🛍️ 스마트스토어 수수료</a>
+    <a href="../coupang/" class="related-btn">🛒 쿠팡 수수료</a>
+    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
+    <a href="../retire/" class="related-btn">📦 퇴직금</a>
+  </div></div>
+</div></div>
+<footer><strong>계산왕</strong> — 직장인·재테크 계산기 모음<br><span style="margin-top:6px;display:block">본 계산기는 참고용이며 실제 금액과 다를 수 있습니다. 정확한 수수료는 배민 사장님 사이트를 확인하세요.</span></footer>
+<script>
+function comma(n){return Math.round(n).toLocaleString('ko-KR');}
+function won(n){return comma(n)+'원';}
+const RATES={baemin1_high:7.8,baemin1_mid:6.8,baemin1_low:2.0,open:6.8,pickup:6.8};
+function updateFields(){
+  const type=document.getElementById('type').value;
+  const deliveryField=document.getElementById('delivery');
+  if(type==='pickup'){deliveryField.value=0;}
+  else{if(!deliveryField.value||deliveryField.value==0)deliveryField.value=2500;}
+}
+function calc(){
+  const price=+document.getElementById('price').value;
+  const type=document.getElementById('type').value;
+  const delivery=+document.getElementById('delivery').value||0;
+  const rate=RATES[type]/100;
+  if(!price){alert('주문 금액을 입력해주세요.');return;}
+  const fee=price*rate;
+  const feeVat=fee*0.1;
+  const feeTotal=fee+feeVat;
+  const totalCost=feeTotal+delivery;
+  const net=price-totalCost;
+  const costRate=totalCost/price*100;
+  const typeNames={baemin1_high:'배민1플러스 상위35%',baemin1_mid:'배민1플러스 35~80%',baemin1_low:'배민1플러스 하위20%',open:'가게배달 오픈리스트',pickup:'포장/픽업'};
+  document.getElementById('main').textContent=won(net);
+  document.getElementById('detail').innerHTML=`
+    <div class="result-row"><span>주문 금액</span><strong>${won(price)}</strong></div>
+    <div class="result-row"><span>주문 유형</span><strong>${typeNames[type]}</strong></div>
+    <div class="result-row"><span>중개수수료 (${(rate*100).toFixed(1)}%)</span><strong style="color:#dc2626">-${won(fee)}</strong></div>
+    <div class="result-row"><span>중개수수료 부가세 (10%)</span><strong style="color:#dc2626">-${won(feeVat)}</strong></div>
+    ${delivery?`<div class="result-row"><span>점주부담 배달비</span><strong style="color:#dc2626">-${won(delivery)}</strong></div>`:''}
+    <div class="result-row"><span>총 비용</span><strong style="color:#dc2626">-${won(totalCost)}</strong></div>
+    <div class="result-row"><span>실효 비용률</span><strong style="color:#dc2626">${costRate.toFixed(2)}%</strong></div>
+    <div class="result-row"><span>실수령액</span><strong style="color:#007c8a">${won(net)}</strong></div>
+    <div style="font-size:11px;color:#888;margin-top:8px">※ PG결제수수료 미포함. 실제 정산은 배민 사장님 사이트 확인 필요.</div>
+  `;
+  document.getElementById('result').classList.add('show');
+}
+</script>
+</body></html>
