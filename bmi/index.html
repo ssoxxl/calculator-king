@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8390635644947402" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI 계산기 2025 — 비만도 측정 | 계산왕</title>
+<meta name="description" content="BMI 체질량지수 계산기. 키와 몸무게로 비만도를 측정하세요. 저체중·정상·과체중·비만 기준 표시.">
+<link rel="canonical" href="https://xn--989av19a47d.com/bmi/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="계산왕">
+<meta property="og:title" content="BMI 계산기 2025 — 비만도 측정 | 계산왕">
+<meta property="og:description" content="키와 몸무게로 BMI 체질량지수와 비만도를 측정하세요.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--text:#1a1a18;--muted:#888880;--teal:#0d9488;--teal-light:#f0fdfa;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+header{background:var(--surface);border-bottom:2px solid var(--text);padding:0 24px;height:56px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:900;display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--text);}
+.logo-badge{background:var(--text);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.back-btn{margin-left:auto;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;text-decoration:none;}
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px 60px;}
+.calc-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;overflow:hidden;}
+.card-hero{padding:28px 28px 20px;border-bottom:1px solid var(--border);}
+.card-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;margin-bottom:10px;background:var(--teal-light);color:var(--teal);text-transform:uppercase;}
+.card-hero h1{font-size:24px;font-weight:900;margin-bottom:6px;}
+.card-hero p{font-size:14px;color:var(--muted);}
+.card-body{padding:24px 28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.field input{width:100%;padding:11px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-family:inherit;outline:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-calc{width:100%;padding:13px;border:none;border-radius:9px;background:var(--teal);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+.result-box{margin-top:16px;padding:18px;border-radius:10px;border:1.5px solid;display:none;}
+.result-box.show{display:block;}
+.result-label{font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+.result-main{font-size:40px;font-weight:900;margin-bottom:4px;}
+.result-grade{font-size:20px;font-weight:700;margin-bottom:12px;}
+.result-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.result-row:last-child{border:none;}
+.result-row strong{font-weight:700;}
+.bmi-bar{height:12px;border-radius:6px;background:linear-gradient(to right,#60a5fa,#34d399,#fbbf24,#f87171,#ef4444);margin:12px 0 4px;position:relative;}
+.bmi-marker{position:absolute;top:-4px;width:4px;height:20px;background:var(--text);border-radius:2px;transform:translateX(-50%);}
+.bmi-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);}
+.desc-section{padding:24px 28px;border-top:1px solid var(--border);background:var(--surface2);}
+.desc-section h2{font-size:15px;font-weight:700;margin-bottom:12px;}
+.bmi-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;}
+.bmi-table th{background:var(--surface2);padding:8px 12px;text-align:left;font-weight:700;border-bottom:1px solid var(--border);}
+.bmi-table td{padding:8px 12px;border-bottom:1px solid var(--border);}
+.faq-item{margin-bottom:14px;}
+.faq-q{font-size:13px;font-weight:700;margin-bottom:4px;}
+.faq-a{font-size:13px;color:#555;line-height:1.7;padding-left:12px;border-left:2px solid var(--border);}
+.related{padding:20px 28px 28px;}
+.related h2{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--muted);}
+.related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.related-btn{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;font-weight:600;text-decoration:none;display:block;text-align:center;}
+footer{background:var(--text);color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;}
+footer strong{color:#fff;}
+@media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.related-grid{grid-template-columns:1fr;}}
+</style>
+<meta property="og:image" content="https://xn--989av19a47d.com/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://xn--989av19a47d.com/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">👑</span></a><a href="../" class="back-btn">← 전체 계산기</a></header>
+<div class="wrap"><div class="calc-card">
+  <div class="card-hero"><span class="card-tag">생활</span><h1>BMI 체질량지수 계산기</h1><p>키와 몸무게로 비만도를 측정합니다. WHO 및 아시아·태평양 기준 적용.</p></div>
+  <div class="card-body">
+    <div class="field-row">
+      <div class="field"><label>키 (cm)</label><input type="number" id="height" placeholder="170"></div>
+      <div class="field"><label>몸무게 (kg)</label><input type="number" id="weight" placeholder="65"></div>
+    </div>
+    <button class="btn-calc" onclick="calc()">계산하기</button>
+    <div class="result-box" id="result">
+      <div class="result-label">BMI 지수</div>
+      <div class="result-main" id="bmiVal"></div>
+      <div class="result-grade" id="bmiGrade"></div>
+      <div class="bmi-bar"><div class="bmi-marker" id="bmiMarker"></div></div>
+      <div class="bmi-labels"><span>저체중</span><span>정상</span><span>과체중</span><span>비만</span><span>고도비만</span></div>
+      <div id="detail" style="margin-top:12px"></div>
+    </div>
+  </div>
+  <div class="desc-section">
+    <h2>📌 BMI(체질량지수)란?</h2>
+    <p>BMI(Body Mass Index, 체질량지수)는 체중(kg)을 키(m)의 제곱으로 나눈 값으로, 비만도를 간편하게 측정하는 지표입니다. 아시아인은 서양인보다 같은 BMI에서도 체지방 비율이 높아 더 낮은 기준이 적용됩니다.</p>
+    <p>BMI는 근육량을 고려하지 않아 근육이 많은 운동선수는 과체중으로 분류될 수 있고, 반대로 근육이 적은 노인은 정상으로 보일 수 있습니다. 따라서 허리둘레, 체지방률 등과 함께 종합적으로 평가하는 것이 좋습니다.</p>
+    <h2 style="margin-top:16px">📊 BMI 기준표 (아시아·태평양)</h2>
+    <table class="bmi-table">
+      <tr><th>BMI</th><th>분류</th></tr>
+      <tr><td>18.5 미만</td><td>저체중</td></tr>
+      <tr><td>18.5 ~ 22.9</td><td>정상</td></tr>
+      <tr><td>23.0 ~ 24.9</td><td>과체중</td></tr>
+      <tr><td>25.0 ~ 29.9</td><td>비만 1단계</td></tr>
+      <tr><td>30.0 이상</td><td>비만 2단계 (고도비만)</td></tr>
+    </table>
+    <div class="faq-item"><div class="faq-q">Q. BMI가 정상인데도 뱃살이 있어요?</div><div class="faq-a">BMI는 근육량을 구분하지 못합니다. 체지방률, 허리둘레 등도 함께 확인하는 것이 정확합니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 아시아 기준이 다른 이유는?</div><div class="faq-a">아시아인은 같은 BMI에서도 서양인보다 체지방 비율이 높아 심혈관질환 위험이 높습니다. 그래서 WHO보다 낮은 기준을 적용합니다.</div></div>
+  </div>
+  <div class="related"><h2>관련 계산기</h2><div class="related-grid">
+    <a href="../bmr/" class="related-btn">🔥 기초대사량</a>
+    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
+    <a href="../dday/" class="related-btn">📅 만나이·D-Day</a>
+    <a href="../savings/" class="related-btn">🏦 적금 만기금액</a>
+  </div></div>
+</div></div>
+<footer><strong>계산왕</strong> — 직장인·재테크 계산기 모음<br><span style="margin-top:6px;display:block">본 계산기는 참고용이며 의학적 진단이 아닙니다.</span></footer>
+<script>
+function calc(){
+  const h=+document.getElementById('height').value/100;
+  const w=+document.getElementById('weight').value;
+  if(!h||!w){alert('키와 몸무게를 입력해주세요.');return;}
+  const bmi=w/(h*h);
+  let grade,color,borderColor,bgColor;
+  if(bmi<18.5){grade='저체중 😟';color='#60a5fa';borderColor='#93c5fd';bgColor='#eff6ff';}
+  else if(bmi<23){grade='정상 😊';color='#10b981';borderColor='#6ee7b7';bgColor='#ecfdf5';}
+  else if(bmi<25){grade='과체중 😐';color='#f59e0b';borderColor='#fcd34d';bgColor='#fffbeb';}
+  else if(bmi<30){grade='비만 1단계 😟';color='#f87171';borderColor='#fca5a5';bgColor='#fff1f2';}
+  else{grade='고도비만 😨';color='#ef4444';borderColor='#f87171';bgColor='#fff1f2';}
+  const idealMin=(18.5*h*h);
+  const idealMax=(22.9*h*h);
+  const markerPct=Math.min(Math.max((bmi-15)/25*100,0),100);
+  const box=document.getElementById('result');
+  box.style.borderColor=borderColor;
+  box.style.background=bgColor;
+  document.getElementById('bmiVal').textContent=bmi.toFixed(1);
+  document.getElementById('bmiVal').style.color=color;
+  document.getElementById('bmiGrade').textContent=grade;
+  document.getElementById('bmiGrade').style.color=color;
+  document.getElementById('bmiMarker').style.left=markerPct+'%';
+  document.getElementById('detail').innerHTML=`
+    <div class="result-row"><span>키</span><strong>${(h*100).toFixed(0)}cm</strong></div>
+    <div class="result-row"><span>몸무게</span><strong>${w}kg</strong></div>
+    <div class="result-row"><span>BMI</span><strong>${bmi.toFixed(1)}</strong></div>
+    <div class="result-row"><span>정상 체중 범위</span><strong>${idealMin.toFixed(1)}kg ~ ${idealMax.toFixed(1)}kg</strong></div>
+    <div class="result-row"><span>분류</span><strong style="color:${color}">${grade}</strong></div>
+  `;
+  box.classList.add('show');
+}
+</script>
+</body></html>

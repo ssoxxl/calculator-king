@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f14"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563eb"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 상단 포인트 라인 -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+
+  <!-- 장식 원형들 -->
+  <circle cx="980" cy="120" r="180" fill="rgba(37,99,235,0.06)"/>
+  <circle cx="1050" cy="500" r="120" fill="rgba(124,58,237,0.06)"/>
+  <circle cx="150" cy="500" r="100" fill="rgba(37,99,235,0.04)"/>
+
+  <!-- 왕관 이모지 영역 -->
+  <text x="600" y="220" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif" font-size="90" text-anchor="middle">👑</text>
+
+  <!-- 메인 타이틀 -->
+  <text x="600" y="320" font-family="Apple SD Gothic Neo, Noto Sans KR, sans-serif" font-size="72" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-2">계산왕</text>
+
+  <!-- 서브 타이틀 -->
+  <text x="600" y="390" font-family="Apple SD Gothic Neo, Noto Sans KR, sans-serif" font-size="28" font-weight="400" fill="rgba(255,255,255,0.6)" text-anchor="middle">모든 계산은 여기서 끝</text>
+
+  <!-- 구분선 -->
+  <rect x="480" y="418" width="240" height="2" fill="url(#accent)" rx="1"/>
+
+  <!-- 하단 태그들 -->
+  <text x="600" y="480" font-family="Apple SD Gothic Neo, Noto Sans KR, sans-serif" font-size="20" fill="rgba(255,255,255,0.4)" text-anchor="middle">연봉 · 퇴직금 · 주식 · 부동산 · 커머스</text>
+
+  <!-- URL -->
+  <text x="600" y="560" font-family="SF Mono, Consolas, monospace" font-size="18" fill="rgba(255,255,255,0.25)" text-anchor="middle">계산왕.com</text>
+</svg>
