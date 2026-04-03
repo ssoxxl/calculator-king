@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8390635444947402" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커피값 절약 계산기 — 아끼면 10년 후 얼마? | 계산왕</title>
+<meta name="description" content="커피값 절약 계산기. 매일 커피 한 잔 값을 아끼면 1년·5년·10년 후 얼마가 될까? 복리 계산 포함.">
+<link rel="canonical" href="https://xn--989av19a47d.com/coffee-savings/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="계산왕">
+<meta property="og:title" content="커피값 절약 계산기 — 매일 한 잔 아끼면 10년 후 얼마?">
+<meta property="og:description" content="매일 커피값 절약하면 1년·5년·10년 후 얼마가 될까? 복리까지 계산해드립니다.">
+<meta property="og:image" content="https://xn--989av19a47d.com/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xn--989av19a47d.com/og-image.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--text:#1a1a18;--muted:#888880;--orange:#ea580c;--orange-light:#fff7ed;--green:#16a34a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+header{background:var(--surface);border-bottom:2px solid var(--text);padding:0 24px;height:56px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:900;display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--text);}
+.logo-badge{background:var(--text);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.back-btn{margin-left:auto;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;text-decoration:none;}
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px 60px;}
+.calc-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;overflow:hidden;}
+.card-hero{padding:28px 28px 20px;border-bottom:1px solid var(--border);}
+.card-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;margin-bottom:10px;background:var(--orange-light);color:var(--orange);text-transform:uppercase;}
+.card-hero h1{font-size:24px;font-weight:900;margin-bottom:6px;}
+.card-hero p{font-size:14px;color:var(--muted);}
+.card-body{padding:24px 28px;}
+.preset-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.preset-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;}
+.preset-btn:hover,.preset-btn.on{background:var(--orange);border-color:var(--orange);color:#fff;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select{width:100%;padding:11px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-family:inherit;outline:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-calc{width:100%;padding:13px;border:none;border-radius:9px;background:var(--orange);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+.result-box{margin-top:16px;padding:20px;border-radius:10px;border:1.5px solid var(--orange);background:var(--orange-light);display:none;}
+.result-box.show{display:block;}
+.result-label{font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:8px;color:var(--orange);}
+.result-main{font-size:34px;font-weight:900;margin-bottom:8px;color:var(--orange);}
+.milestone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
+.milestone-box{background:#fff;border-radius:8px;padding:12px;text-align:center;border:1px solid rgba(234,88,12,.2);}
+.milestone-box .label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.milestone-box .val{font-size:15px;font-weight:900;color:var(--orange);}
+.result-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.result-row:last-child{border:none;}
+.result-row strong{font-weight:700;}
+.fun-fact{background:#fff;border-radius:8px;padding:12px 14px;margin-top:10px;border-left:4px solid var(--orange);font-size:13px;color:#555;line-height:1.7;}
+.desc-section{padding:24px 28px;border-top:1px solid var(--border);background:var(--surface2);}
+.desc-section h2{font-size:15px;font-weight:700;margin-bottom:12px;}
+.desc-section p{font-size:13px;color:#555;line-height:1.8;margin-bottom:14px;}
+.faq-item{margin-bottom:14px;}
+.faq-q{font-size:13px;font-weight:700;margin-bottom:4px;}
+.faq-a{font-size:13px;color:#555;line-height:1.7;padding-left:12px;border-left:2px solid var(--border);}
+.related{padding:20px 28px 28px;}
+.related h2{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--muted);}
+.related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.related-btn{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;font-weight:600;text-decoration:none;display:block;text-align:center;}
+footer{background:#1a1a18;color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;}
+footer strong{color:#fff;}
+@media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.milestone-grid{grid-template-columns:1fr;}.related-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">👑</span></a><a href="../" class="back-btn">← 전체 계산기</a></header>
+<div class="wrap"><div class="calc-card">
+  <div class="card-hero">
+    <span class="card-tag">재테크</span>
+    <h1>커피값 절약 계산기 ☕</h1>
+    <p>매일 커피 한 잔 값을 아끼면 1년·5년·10년 후 얼마가 될까?</p>
+  </div>
+  <div class="card-body">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">자주 쓰는 금액</div>
+    <div class="preset-btns">
+      <button class="preset-btn" onclick="setPreset(1500,this)">아메리카노 1,500원</button>
+      <button class="preset-btn" onclick="setPreset(4500,this)">스타벅스 4,500원</button>
+      <button class="preset-btn" onclick="setPreset(6000,this)">카페라떼 6,000원</button>
+      <button class="preset-btn" onclick="setPreset(8000,this)">프라푸치노 8,000원</button>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>하루 절약 금액 (원)</label><input type="number" id="daily" placeholder="4,500" value="4500"></div>
+      <div class="field"><label>절약 횟수</label>
+        <select id="freq">
+          <option value="365">매일 (365일)</option>
+          <option value="261">평일만 (261일)</option>
+          <option value="104">주말만 (104일)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>투자 예상 수익률 (%/년)</label><input type="number" id="rate" placeholder="3.5" value="3.5" step="0.1"></div>
+      <div class="field"><label>목표 기간 (년)</label>
+        <select id="years">
+          <option value="1">1년</option>
+          <option value="3">3년</option>
+          <option value="5">5년</option>
+          <option value="10" selected>10년</option>
+          <option value="20">20년</option>
+          <option value="30">30년</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calc()">계산하기</button>
+    <div class="result-box" id="result">
+      <div class="result-label" id="res-label">목표 기간 후 총액</div>
+      <div class="result-main" id="res-main"></div>
+      <div class="milestone-grid">
+        <div class="milestone-box"><div class="label">1년 후</div><div class="val" id="m1"></div></div>
+        <div class="milestone-box"><div class="label">5년 후</div><div class="val" id="m5"></div></div>
+        <div class="milestone-box"><div class="label">10년 후</div><div class="val" id="m10"></div></div>
+      </div>
+      <div id="detail"></div>
+      <div class="fun-fact" id="fun-fact"></div>
+    </div>
+  </div>
+
+  <div class="desc-section">
+    <h2>☕ 커피값 절약의 복리 효과</h2>
+    <p>매일 아끼는 소액도 꾸준히 모아 투자하면 복리 효과로 놀라운 금액이 됩니다. 스타벅스 아메리카노 한 잔(약 4,500원)을 매일 아끼고 연 4% 적금에 넣으면 10년 후 약 2,000만원 이상이 됩니다.</p>
+    <p>이른바 <strong>'라떼 효과(Latte Factor)'</strong>는 미국 재테크 전문가 데이비드 바크가 제시한 개념으로, 일상의 작은 소비를 절약하고 투자하면 큰 재산을 만들 수 있다는 이론입니다.</p>
+    <div class="faq-item"><div class="faq-q">Q. 수익률을 얼마로 설정해야 하나요?</div><div class="faq-a">안전한 예금·적금은 3~4%, 인덱스 펀드는 역사적으로 연 7~10% 수준입니다. 보수적으로는 3.5%, 장기 투자라면 5~7%로 설정해보세요.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 커피를 꼭 끊어야 하나요?</div><div class="faq-a">물론 아닙니다! 비싼 카페 대신 편의점 커피로 바꾸거나, 주 3회만 카페를 가는 등 소비 패턴을 조금만 바꿔도 효과가 있습니다.</div></div>
+  </div>
+  <div class="related"><h2>관련 계산기</h2><div class="related-grid">
+    <a href="../savings/" class="related-btn">🏦 적금 만기금액</a>
+    <a href="../deposit/" class="related-btn">💰 예금 이자</a>
+    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
+    <a href="../stock/" class="related-btn">📈 주식 물타기</a>
+  </div></div>
+</div></div>
+<footer><strong>계산왕</strong> — 모든 계산은 여기서 끝<br><span style="margin-top:6px;display:block">본 계산기는 참고용이며 실제 투자 수익을 보장하지 않습니다.</span></footer>
+<script>
+function comma(n){return Math.round(n).toLocaleString('ko-KR');}
+function won(n){
+  if(n>=100000000)return (n/100000000).toFixed(1)+'억원';
+  if(n>=10000)return (n/10000).toFixed(0)+'만원';
+  return comma(n)+'원';
+}
+function setPreset(val,btn){
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('daily').value=val;
+}
+function calcFuture(dailyAmt, freq, rateAnnual, years){
+  const monthly=dailyAmt*freq/12;
+  const mr=rateAnnual/100/12;
+  if(mr===0)return monthly*12*years;
+  return monthly*((Math.pow(1+mr,12*years)-1)/mr)*(1+mr);
+}
+function calc(){
+  const daily=+document.getElementById('daily').value;
+  const freq=+document.getElementById('freq').value;
+  const rate=+document.getElementById('rate').value;
+  const years=+document.getElementById('years').value;
+  if(!daily){alert('금액을 입력해주세요.');return;}
+  const annualSave=daily*freq;
+  const total=calcFuture(daily,freq,rate,years);
+  const m1=calcFuture(daily,freq,rate,1);
+  const m5=calcFuture(daily,freq,rate,5);
+  const m10=calcFuture(daily,freq,rate,10);
+  document.getElementById('res-label').textContent=years+'년 후 총액';
+  document.getElementById('res-main').textContent=won(total);
+  document.getElementById('m1').textContent=won(m1);
+  document.getElementById('m5').textContent=won(m5);
+  document.getElementById('m10').textContent=won(m10);
+  const totalPrincipal=annualSave*years;
+  const totalInterest=total-totalPrincipal;
+  document.getElementById('detail').innerHTML=`
+    <div class="result-row"><span>하루 절약 금액</span><strong>${comma(daily)}원</strong></div>
+    <div class="result-row"><span>연간 절약액</span><strong>${comma(annualSave)}원</strong></div>
+    <div class="result-row"><span>${years}년 납입 원금</span><strong>${comma(totalPrincipal)}원</strong></div>
+    <div class="result-row"><span>복리 수익 (${rate}%)</span><strong style="color:#16a34a">+${comma(totalInterest)}원</strong></div>
+    <div class="result-row"><span>${years}년 후 총액</span><strong style="color:#ea580c">${won(total)}</strong></div>
+  `;
+  // 재미있는 비교
+  const funFacts=[
+    `${years}년 후 ${won(total)}으로 테슬라 주식 약 ${Math.floor(total/300000)}주를 살 수 있어요! (주당 30만원 기준)`,
+    `${years}년 후 ${won(total)}은 서울 평균 월세 ${Math.floor(total/700000)}달 치 금액이에요!`,
+    `매일 커피 한 잔만 아껴도 ${years}년 후엔 ${won(total)}이 됩니다 ☕→💰`,
+  ];
+  document.getElementById('fun-fact').textContent=funFacts[Math.floor(Math.random()*funFacts.length)];
+  document.getElementById('result').classList.add('show');
+}
+</script>
+</body></html>

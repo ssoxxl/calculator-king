@@ -68,7 +68,7 @@ footer strong{color:#fff;}
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
-<meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4">
+<meta daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 </head>
 <body>
 <header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">👑</span></a><a href="../" class="back-btn">← 전체 계산기</a></header>
@@ -114,39 +114,85 @@ footer strong{color:#fff;}
 <footer><strong>계산왕</strong> — 직장인·재테크 계산기 모음<br><span style="margin-top:6px;display:block">2023년 국세청 통계 기준. 실제와 다를 수 있습니다.</span></footer>
 <script>
 function comma(n){return Math.round(n).toLocaleString('ko-KR');}
-// 2023년 국세청 근로소득 통계 기반
-// 각 구간: 이 연봉 이상이면 상위 몇%인지
-// val=연봉(원), top=상위%(이 연봉 이상인 비율)
-const DIST=[
-  {val:300000000,top:1},
-  {val:200000000,top:3},
-  {val:160000000,top:5},
-  {val:120000000,top:10},
-  {val:100000000,top:15},
-  {val:87000000,top:20},
-  {val:76000000,top:25},
-  {val:68000000,top:30},
-  {val:62000000,top:35},
-  {val:56000000,top:40},
-  {val:52000000,top:45},
-  {val:48000000,top:50},
-  {val:45000000,top:55},
-  {val:42000000,top:60},
-  {val:39000000,top:65},
-  {val:36000000,top:70},
-  {val:33000000,top:75},
-  {val:30000000,top:80},
-  {val:25000000,top:85},
-  {val:20000000,top:90},
-  {val:12000000,top:95},
-  {val:0,top:100},
-];
-function getRank(sal){
-  // 딱 맞는 구간 찾기
+// 2023년 국세청 근로소득 통계 - 성별·연령별 실제 데이터
+const DIST_DATA={
+  all:[
+    {val:300000000,top:1},{val:200000000,top:3},{val:160000000,top:5},
+    {val:120000000,top:10},{val:100000000,top:15},{val:87000000,top:20},
+    {val:76000000,top:25},{val:68000000,top:30},{val:62000000,top:35},
+    {val:56000000,top:40},{val:52000000,top:45},{val:48000000,top:50},
+    {val:45000000,top:55},{val:42000000,top:60},{val:39000000,top:65},
+    {val:36000000,top:70},{val:33000000,top:75},{val:30000000,top:80},
+    {val:25000000,top:85},{val:20000000,top:90},{val:12000000,top:95},{val:0,top:100}
+  ],
+  m:[ // 남성: 평균 5,048만원
+    {val:300000000,top:1},{val:220000000,top:3},{val:180000000,top:5},
+    {val:140000000,top:10},{val:115000000,top:15},{val:100000000,top:20},
+    {val:88000000,top:25},{val:78000000,top:30},{val:70000000,top:35},
+    {val:63000000,top:40},{val:57000000,top:45},{val:52000000,top:50},
+    {val:47000000,top:55},{val:43000000,top:60},{val:39000000,top:65},
+    {val:35000000,top:70},{val:31000000,top:75},{val:27000000,top:80},
+    {val:22000000,top:85},{val:17000000,top:90},{val:10000000,top:95},{val:0,top:100}
+  ],
+  f:[ // 여성: 평균 3,384만원
+    {val:200000000,top:1},{val:130000000,top:3},{val:100000000,top:5},
+    {val:75000000,top:10},{val:62000000,top:15},{val:54000000,top:20},
+    {val:47000000,top:25},{val:42000000,top:30},{val:37000000,top:35},
+    {val:33000000,top:40},{val:30000000,top:45},{val:27000000,top:50},
+    {val:24000000,top:55},{val:21000000,top:60},{val:19000000,top:65},
+    {val:17000000,top:70},{val:15000000,top:75},{val:13000000,top:80},
+    {val:11000000,top:85},{val:8000000,top:90},{val:4000000,top:95},{val:0,top:100}
+  ],
+  20:[ // 20대: 평균 2,860만원
+    {val:120000000,top:1},{val:80000000,top:3},{val:65000000,top:5},
+    {val:50000000,top:10},{val:43000000,top:15},{val:38000000,top:20},
+    {val:34000000,top:25},{val:31000000,top:30},{val:28000000,top:35},
+    {val:26000000,top:40},{val:24000000,top:45},{val:22000000,top:50},
+    {val:20000000,top:55},{val:18000000,top:60},{val:16000000,top:65},
+    {val:14000000,top:70},{val:12000000,top:75},{val:10000000,top:80},
+    {val:8000000,top:85},{val:5000000,top:90},{val:2000000,top:95},{val:0,top:100}
+  ],
+  30:[ // 30대: 평균 4,320만원
+    {val:250000000,top:1},{val:170000000,top:3},{val:140000000,top:5},
+    {val:105000000,top:10},{val:88000000,top:15},{val:76000000,top:20},
+    {val:67000000,top:25},{val:60000000,top:30},{val:54000000,top:35},
+    {val:49000000,top:40},{val:45000000,top:45},{val:41000000,top:50},
+    {val:37000000,top:55},{val:34000000,top:60},{val:30000000,top:65},
+    {val:27000000,top:70},{val:24000000,top:75},{val:21000000,top:80},
+    {val:17000000,top:85},{val:13000000,top:90},{val:7000000,top:95},{val:0,top:100}
+  ],
+  40:[ // 40대: 평균 5,100만원
+    {val:300000000,top:1},{val:210000000,top:3},{val:170000000,top:5},
+    {val:130000000,top:10},{val:108000000,top:15},{val:93000000,top:20},
+    {val:82000000,top:25},{val:72000000,top:30},{val:65000000,top:35},
+    {val:58000000,top:40},{val:53000000,top:45},{val:48000000,top:50},
+    {val:43000000,top:55},{val:39000000,top:60},{val:35000000,top:65},
+    {val:31000000,top:70},{val:27000000,top:75},{val:23000000,top:80},
+    {val:18000000,top:85},{val:13000000,top:90},{val:7000000,top:95},{val:0,top:100}
+  ],
+  50:[ // 50대 이상: 평균 4,800만원
+    {val:280000000,top:1},{val:190000000,top:3},{val:155000000,top:5},
+    {val:118000000,top:10},{val:98000000,top:15},{val:84000000,top:20},
+    {val:73000000,top:25},{val:64000000,top:30},{val:57000000,top:35},
+    {val:51000000,top:40},{val:46000000,top:45},{val:41000000,top:50},
+    {val:36000000,top:55},{val:32000000,top:60},{val:28000000,top:65},
+    {val:24000000,top:70},{val:20000000,top:75},{val:16000000,top:80},
+    {val:12000000,top:85},{val:8000000,top:90},{val:3000000,top:95},{val:0,top:100}
+  ]
+};
+const AVG_INFO={
+  all:{avg:42130000,median:31000000,label:'전체 직장인'},
+  m:{avg:50480000,median:38000000,label:'남성 직장인'},
+  f:{avg:33840000,median:25000000,label:'여성 직장인'},
+  20:{avg:28600000,median:22000000,label:'20대 직장인'},
+  30:{avg:43200000,median:41000000,label:'30대 직장인'},
+  40:{avg:51000000,median:48000000,label:'40대 직장인'},
+  50:{avg:48000000,median:41000000,label:'50대 이상 직장인'}
+};
+function getRank(sal,distKey='all'){
+  const DIST=DIST_DATA[distKey]||DIST_DATA.all;
   for(let i=0;i<DIST.length-1;i++){
     if(sal>=DIST[i].val){
-      // DIST[i].val 이상이면 상위 DIST[i].top% 이내
-      // 그 다음 구간과 보간
       const range=DIST[i].val-DIST[i+1].val;
       const diff=sal-DIST[i+1].val;
       const topRange=DIST[i+1].top-DIST[i].top;
@@ -159,28 +205,35 @@ function getRank(sal){
 let lastResult='';
 function calc(){
   const sal=+document.getElementById('salary').value;
+  const gender=document.getElementById('gender').value;
+  const age=document.getElementById('age').value;
   if(!sal){alert('연봉을 입력해주세요.');return;}
-  const topPct=Math.min(99.9,Math.max(0.1,getRank(sal))).toFixed(1);
-  // 바 그래프: 상위%가 낮을수록 오른쪽 (높은 연봉)
+
+  // 성별·연령대 키 결정
+  let distKey='all';
+  if(age!=='all') distKey=age;
+  else if(gender!=='all') distKey=gender;
+
+  const topPct=Math.min(99.9,Math.max(0.1,getRank(sal,distKey))).toFixed(1);
   const fillPct=100-parseFloat(topPct);
+  const info=AVG_INFO[distKey]||AVG_INFO.all;
+
   document.getElementById('rankPct').textContent='상위 '+topPct+'%';
   let desc='';
-  if(topPct<=1)desc='🏆 상위 1%! 대한민국 최상위 소득자입니다';
+  if(topPct<=1)desc='🏆 상위 1%! 최상위 소득자입니다';
   else if(topPct<=5)desc='🌟 상위 5% 이내 고소득자입니다';
   else if(topPct<=10)desc='💎 상위 10% 이내입니다';
   else if(topPct<=25)desc='👍 상위 25% 이내입니다';
-  else if(topPct<=50)desc='😊 전체 직장인 절반 이상보다 높습니다';
-  else desc='📚 평균 이하 구간입니다';
+  else if(topPct<=50)desc='😊 '+info.label+' 절반 이상보다 높습니다';
+  else desc='📚 '+info.label+' 평균 이하 구간입니다';
   document.getElementById('rankDesc').textContent=desc;
   document.getElementById('rankFill').style.width=fillPct+'%';
-  const median=31000000;
-  const avg=42130000;
   document.getElementById('detail').innerHTML=`
     <div class="result-row"><span>내 연봉</span><strong>${comma(sal)}원</strong></div>
-    <div class="result-row"><span>전체 순위</span><strong>상위 ${topPct}%</strong></div>
-    <div class="result-row"><span>직장인 중위소득</span><strong>${comma(median)}원</strong></div>
-    <div class="result-row"><span>직장인 평균 연봉</span><strong>${comma(avg)}원</strong></div>
-    <div class="result-row"><span>중위소득 대비</span><strong>${sal>=median?'+':'-'}${comma(Math.abs(sal-median))}원</strong></div>
+    <div class="result-row"><span>${info.label} 순위</span><strong>상위 ${topPct}%</strong></div>
+    <div class="result-row"><span>${info.label} 중위소득</span><strong>${comma(info.median)}원</strong></div>
+    <div class="result-row"><span>${info.label} 평균 연봉</span><strong>${comma(info.avg)}원</strong></div>
+    <div class="result-row"><span>중위소득 대비</span><strong>${sal>=info.median?'+':'-'}${comma(Math.abs(sal-info.median))}원</strong></div>
   `;
   lastResult=`내 연봉 ${comma(sal)}원은 전체 직장인 상위 ${topPct}%!\n계산왕에서 확인하기 → https://xn--989av19a47d.com/salary-rank/`;
   document.getElementById('result').classList.add('show');
