@@ -15,6 +15,12 @@
 <meta name="twitter:image" content="https://xn--989av19a47d.com/og-image.svg">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
+<script>
+(function(){
+  var s=localStorage.getItem('gyesanwang_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  document.documentElement.setAttribute('data-theme',s);
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--text:#1a1a18;--muted:#888880;--green:#16a34a;--green-light:#f0fdf4;--accent:#2563eb;--accent-light:#eff6ff;}
@@ -63,10 +69,26 @@ header{background:var(--surface);border-bottom:2px solid var(--text);padding:0 2
 footer{background:#1a1a18;color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;}
 footer strong{color:#fff;}
 @media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr 1fr;}.related-grid{grid-template-columns:1fr;}.dday-num{font-size:60px;}}
+
+[data-theme="dark"]{
+  --bg:#0f0f14;--surface:#1a1a24;--surface2:#222230;
+  --border:rgba(255,255,255,0.08);--text:#e8e8f0;--muted:#6b6b80;
+  --accent-light:rgba(37,99,235,0.15);
+  --green-light:rgba(22,163,74,0.15);
+  --orange-light:rgba(234,88,12,0.15);
+  --purple-light:rgba(124,58,237,0.15);
+  --teal-light:rgba(13,148,136,0.15);
+  --pink-light:rgba(219,39,119,0.15);
+  --indigo-light:rgba(67,56,202,0.15);
+  --yellow-light:rgba(217,119,6,0.15);
+}
+body{transition:background .3s,color .3s;}
+
 </style>
 </head>
 <body>
-<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">王</span></a><a href="../" class="back-btn">← 전체 계산기</a></header>
+<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge">王</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
+</header>
 <div class="wrap"><div class="calc-card">
   <div class="card-hero">
     <span class="card-tag">직장인</span>

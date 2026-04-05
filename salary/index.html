@@ -19,6 +19,12 @@
 <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="연봉 실수령액 계산기 2025 — 계산왕">
     <meta name="twitter:description" content="2025년 4대보험 소득세 공제 후 연봉 실수령액을 계산하세요.">
+<script>
+(function(){
+  var s=localStorage.getItem('gyesanwang_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  document.documentElement.setAttribute('data-theme',s);
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--text:#1a1a18;--muted:#888880;--green:#16a34a;--green-light:#f0fdf4;--red:#dc2626;}
@@ -69,6 +75,21 @@ footer strong{color:#fff;}
   .field-row{grid-template-columns:1fr;}
   .related-grid{grid-template-columns:1fr;}
 }
+
+[data-theme="dark"]{
+  --bg:#0f0f14;--surface:#1a1a24;--surface2:#222230;
+  --border:rgba(255,255,255,0.08);--text:#e8e8f0;--muted:#6b6b80;
+  --accent-light:rgba(37,99,235,0.15);
+  --green-light:rgba(22,163,74,0.15);
+  --orange-light:rgba(234,88,12,0.15);
+  --purple-light:rgba(124,58,237,0.15);
+  --teal-light:rgba(13,148,136,0.15);
+  --pink-light:rgba(219,39,119,0.15);
+  --indigo-light:rgba(67,56,202,0.15);
+  --yellow-light:rgba(217,119,6,0.15);
+}
+body{transition:background .3s,color .3s;}
+
 </style>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
@@ -78,6 +99,7 @@ footer strong{color:#fff;}
 <header>
   <a href="../" class="logo"><span>계산왕</span><span class="logo-badge" style="background:#0a0a0f;color:#FFD700;font-family:'Courier New',monospace;border:1px solid #D4A017;">王</span></a>
   <a href="../" class="back-btn">← 전체 계산기</a>
+<button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
 </header>
 
 <div class="wrap">
