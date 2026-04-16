@@ -128,22 +128,21 @@ body{transition:background .3s,color .3s;}
     <button class="btn-calc" onclick="generate()">🎰 행운의 번호 생성!</button>
     <div class="result-area" id="result"></div>
   </div>
-  <div class="desc-section">
-    <h2>🎨 번호 색상 기준</h2>
-    <div class="color-guide">
-      <div class="color-item"><div class="color-dot" style="background:#fbbf24"></div>1~10 노란공</div>
-      <div class="color-item"><div class="color-dot" style="background:#60a5fa"></div>11~20 파란공</div>
-      <div class="color-item"><div class="color-dot" style="background:#f87171"></div>21~30 빨간공</div>
-      <div class="color-item"><div class="color-dot" style="background:#9ca3af"></div>31~40 회색공</div>
-      <div class="color-item"><div class="color-dot" style="background:#34d399"></div>41~45 초록공</div>
-      <div class="color-item"><div class="color-dot" style="background:#fff;border:2px solid #7c3aed"></div>보너스</div>
-    </div>
-    <h2 style="margin-top:16px">📌 로또 당첨 확률</h2>
-    <p>로또 6/45는 1~45 중 6개 숫자를 맞추는 복권입니다. 1등 당첨 확률은 약 <strong>814만 5,060분의 1</strong>로 매우 낮습니다. 2등(보너스 번호 포함 5개 일치)은 약 135만 분의 1입니다.</p>
-    <p>로또는 매주 토요일 밤 8시 45분에 추첨하며, 1장 1,000원입니다. 당첨금은 1등 당첨자 수에 따라 달라지며 평균 20~30억원 수준입니다. 당첨금에서 33%가 제세공과금으로 공제됩니다.</p>
-    <div class="faq-item"><div class="faq-q">Q. 자동과 수동 어느 게 유리한가요?</div><div class="faq-a">당첨 확률은 동일합니다. 다만 많은 사람이 비슷한 패턴(생일, 연속번호 등)을 선택하므로, 당첨 시 자동이 단독 당첨 가능성이 높을 수 있습니다.</div></div>
-    <div class="faq-item"><div class="faq-q">Q. 보너스 번호란?</div><div class="faq-a">1등 번호 6개 외에 추가로 뽑는 1개 번호입니다. 5개 번호가 일치하고 보너스 번호까지 맞으면 2등입니다.</div></div>
-    <div class="faq-item"><div class="faq-q">Q. 1등 당첨금은 얼마인가요?</div><div class="faq-a">매주 다르지만 평균 20~30억 수준입니다. 당첨금의 33%가 세금으로 공제됩니다.</div></div>
+    <div class="desc-section">
+    <h2>📌 로또 당첨 확률과 통계</h2>
+    <p>로또 6/45는 45개의 숫자 중 6개를 맞히는 복권입니다. 1등 확률은 1/8,145,060으로 약 800만분의 1입니다. 매주 토요일 오후 8시 45분에 추첨이 진행됩니다.</p>
+    <p><strong>등위별 당첨 조건과 확률</strong></p>
+    <p>1등 (6개 일치): 확률 1/8,145,060, 평균 당첨금 약 20~30억원. 2등 (5개+보너스): 확률 1/1,357,510, 평균 약 5~10억원. 3등 (5개 일치): 확률 1/35,724, 평균 약 150만원. 4등 (4개 일치): 확률 1/733, 당첨금 5만원. 5등 (3개 일치): 확률 1/45, 당첨금 5,000원.</p>
+    <p><strong>당첨금 세금</strong></p>
+    <p>3등 이상은 당첨금에서 세금이 원천징수됩니다. 당첨금 200만원 이하: 비과세. 200만원 초과~3억원: 소득세 22%(지방소득세 포함). 3억원 초과분: 33%. 실제 수령액 = 당첨금 × (1 - 세율). 1등 당첨 시 20억이면 약 13.4억 실수령.</p>
+    <p><strong>로또 구매 전략 (통계 기반)</strong></p>
+    <p>어떤 숫자 조합도 확률은 동일합니다(1/8,145,060). 단, 다수가 선택하는 번호(1~10번, 생일 날짜)는 당첨 시 분배금이 적을 수 있습니다. 자동 구매가 수동보다 통계적으로 유리하지 않으나, 중복 선택을 피할 수 있습니다.</p>
+    <p><strong>로또 판매점 구매 vs 온라인 구매</strong></p>
+    <p>동행복권 앱이나 홈페이지에서 온라인 구매 가능(주 5만원 한도). 판매점 방문 없이 편리하고, 당첨 확인과 수령도 자동으로 처리됩니다. 미성년자는 구매 불가.</p>
+    <div class="faq-item"><div class="faq-q">Q. 로또 1등 당첨금은 세금 내고 얼마 받나요?</div><div class="faq-a">평균 당첨금 25억 기준: 200만원 비과세, 3억원까지 22% 세율, 3억 초과분(21.8억)에 33% = 약 8.7억 세금. 실수령 약 16.3억원. 당첨금 규모에 따라 차이가 있습니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 자동과 수동, 어떤 게 유리한가요?</div><div class="faq-a">확률은 동일합니다. 자동은 컴퓨터가 무작위로 생성하고, 수동은 본인이 선택합니다. 생일·기념일 등 의미 있는 번호를 고르면 당첨 시 심리적 만족감이 크지만, 해당 번호를 선택하는 사람이 많으면 분배금이 적어질 수 있습니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 연금복권과 로또 어떤 게 나을까요?</div><div class="faq-a">연금복권 720+는 당첨 시 매월 700만원씩 20년간 지급(총 16.8억)됩니다. 로또는 일시금 수령. 당첨 확률은 연금복권이 약간 높지만, 기대 수령액을 현재가치로 환산하면 비슷한 수준입니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 당첨 확인은 언제 할 수 있나요?</div><div class="faq-a">추첨 당일(토요일) 오후 9시 이후 동행복권 홈페이지·앱에서 확인 가능합니다. 1~2등은 전국 복권 판매점이나 농협은행에서 수령하며, 당첨일로부터 1년 이내에 청구해야 합니다.</div></div>
   </div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
     <a href="../dday/" class="related-btn">📅 만나이·D-Day</a>

@@ -110,13 +110,22 @@ body{transition:background .3s,color .3s;}
     <button class="btn-calc" onclick="calc()">계산하기</button>
     <div class="result-box" id="result"><div class="result-label">기초대사량 (BMR)</div><div class="result-main" id="main"></div><div id="detail"></div></div>
   </div>
-  <div class="desc-section">
-    <h2>📌 기초대사량(BMR)이란?</h2>
-    <p>기초대사량(Basal Metabolic Rate, BMR)은 아무런 활동을 하지 않고 가만히 있어도 생명 유지를 위해 소모되는 최소한의 칼로리입니다. 호흡, 심장 박동, 체온 유지, 내장 기관 활동 등에 쓰입니다.</p>
-    <p>여기에 활동 수준을 곱하면 하루 총 필요 칼로리(TDEE, Total Daily Energy Expenditure)가 됩니다. 다이어트를 위해서는 TDEE에서 500kcal 정도를 줄이는 것이 일반적이며, 1주일에 약 0.5kg 감량 효과를 기대할 수 있습니다.</p>
-    <p>이 계산기는 <strong>Mifflin-St Jeor 공식</strong>을 사용합니다. 남성: (10×체중) + (6.25×키) - (5×나이) + 5, 여성: (10×체중) + (6.25×키) - (5×나이) - 161로 계산됩니다. 현재 가장 정확한 BMR 계산 공식으로 알려져 있습니다.</p>
-    <div class="faq-item"><div class="faq-q">Q. 다이어트 시 칼로리는 얼마나 줄여야 하나요?</div><div class="faq-a">TDEE에서 하루 500kcal를 줄이면 1주일에 약 0.5kg 감량 효과가 있습니다. 기초대사량 이하로 먹는 것은 근손실 위험이 있어 권장하지 않습니다.</div></div>
-    <div class="faq-item"><div class="faq-q">Q. 나이가 들면 기초대사량이 줄어드나요?</div><div class="faq-a">네. 보통 30대부터 10년마다 2~3%씩 감소합니다. 근육량 유지가 기초대사량 유지에 중요합니다.</div></div>
+    <div class="desc-section">
+    <h2>📌 기초대사량(BMR) 완벽 가이드</h2>
+    <p>기초대사량(Basal Metabolic Rate, BMR)은 아무것도 하지 않고 가만히 있어도 생명 유지를 위해 소모되는 최소 칼로리입니다. 호흡, 심장 박동, 체온 유지, 소화, 뇌 활동 등에 쓰이며 하루 소비 칼로리의 60~70%를 차지합니다.</p>
+    <p><strong>Mifflin-St Jeor 공식 (가장 정확한 BMR 계산법)</strong></p>
+    <p>남성: (10 × 체중kg) + (6.25 × 키cm) - (5 × 나이) + 5<br>여성: (10 × 체중kg) + (6.25 × 키cm) - (5 × 나이) - 161<br>이 공식은 2005년 연구에서 다른 공식보다 실제 측정값과 가장 일치한다고 검증됐습니다.</p>
+    <p><strong>활동대사량(TDEE) = BMR × 활동계수</strong></p>
+    <p>거의 운동 안 함 × 1.2, 가벼운 운동(주 1~3회) × 1.375, 중간 운동(주 3~5회) × 1.55, 고강도 운동(주 6~7회) × 1.725, 운동선수급 × 1.9. TDEE가 하루 실제 소비 칼로리이며, 이보다 적게 먹으면 체중이 줄고 많이 먹으면 늘어납니다.</p>
+    <p><strong>실제 계산 예시</strong></p>
+    <p>여성, 30세, 키 165cm, 체중 60kg, 가벼운 운동 시:<br>BMR = (10×60) + (6.25×165) - (5×30) - 161 = 1,370 kcal<br>TDEE = 1,370 × 1.375 = 약 1,884 kcal<br>다이어트 목표: 1,384 kcal (TDEE - 500)</p>
+    <p><strong>기초대사량을 높이는 방법</strong></p>
+    <p>근육량 증가가 가장 효과적입니다. 근육 1kg당 하루 약 13kcal를 추가 소모합니다. 근력 운동을 주 2~3회 꾸준히 하고, 단백질 섭취(체중 kg당 1.2~1.6g)를 늘리세요. 급격한 다이어트는 오히려 기초대사량을 낮춥니다.</p>
+    <div class="faq-item"><div class="faq-q">Q. 다이어트 목표 칼로리는 어떻게 정하나요?</div><div class="faq-a">TDEE에서 하루 300~500kcal를 줄이면 주 0.3~0.5kg 감량이 가능합니다. 1,200kcal(여성) 또는 1,500kcal(남성) 이하로 먹으면 근손실과 대사 저하 위험이 있으니 주의하세요.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 나이가 들면 기초대사량이 얼마나 줄어드나요?</div><div class="faq-a">30대 이후 10년마다 약 2~3% 감소합니다. 50대는 20대 대비 약 10~15% 낮아질 수 있습니다. 근력 운동으로 근육량을 유지하면 감소폭을 크게 줄일 수 있습니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 체중이 같아도 기초대사량이 다를 수 있나요?</div><div class="faq-a">네. 근육량이 많을수록 기초대사량이 높습니다. 같은 체중이라도 근육질인 사람이 체지방이 많은 사람보다 기초대사량이 200~300kcal 이상 높을 수 있습니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 다이어트 중 근육이 빠지지 않으려면?</div><div class="faq-a">단백질을 충분히 섭취(체중 kg당 1.6~2.0g)하고, 유산소보다 근력 운동을 병행하세요. 칼로리 적자를 하루 500kcal 이내로 제한하면 근손실을 최소화할 수 있습니다.</div></div>
+    <div class="faq-item"><div class="faq-q">Q. 기초대사량보다 적게 먹으면 더 빨리 빠지나요?</div><div class="faq-a">단기적으로는 빠질 수 있지만 장기적으로는 역효과입니다. 기초대사량 이하 섭취 시 신체가 절약 모드로 전환되어 대사가 낮아지고, 근손실과 요요 위험이 급증합니다.</div></div>
   </div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
     <a href="../bmi/" class="related-btn">⚖️ BMI 계산기</a>
