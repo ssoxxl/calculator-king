@@ -314,5 +314,98 @@ window.EXTRA_CALCULATORS={
     const income=positive('income'),existing=positive('existing'),loan=positive('loan'),rate=positive('rate')+positive('stress'),years=positive('years'),limit=positive('limit')||40;
     const yearly=annuity(loan,rate,years)*12,dsr=(existing+yearly)/income*100,room=income*limit/100-existing;
     render(number(dsr,1)+'%',[['적용금리 (스트레스 포함)',number(rate,2)+'%'],['신규대출 연 원리금',won(yearly)],['전체 연 원리금',won(existing+yearly)],['비교 한도',limit+'%'],['한도 내 연 상환 여력',won(Math.max(0,room))],['판정',dsr<=limit?'한도 이내':'한도 초과']]);
+  },
+
+  'date-calc':()=>{
+    const base=parseDate('base');
+    if(!base){alert('기준일을 입력해 주세요.');return;}
+    const include=selected('includeStart')==='yes';
+    const weekday=d=>['일','월','화','수','목','금','토'][d.getDay()];
+    const fmt=d=>`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${weekday(d)})`;
+    if(selected('mode')==='add'){
+      const days=Math.round(value('days'));
+      const shift=include?(days>0?days-1:days<0?days+1:0):days;
+      const result=new Date(base.getFullYear(),base.getMonth(),base.getDate()+shift);
+      render(fmt(result),[['기준일',fmt(base)],['더한 일수',`${number(days)}일${include?' (기준일 포함)':''}`],['주 단위',`${Math.trunc(days/7)}주 ${Math.abs(days%7)}일`],['대략 개월 수',number(days/30.4375,1)+'개월']]);
+      return;
+    }
+    const target=parseDate('target');
+    if(!target){alert('비교할 날짜를 입력해 주세요.');return;}
+    const [from,to]=base<=target?[base,target]:[target,base];
+    const raw=Math.round((to-from)/dayMs),total=raw+(include?1:0);
+    let weekdays=0;
+    for(let i=include?0:1;i<=raw&&i<=36600;i++){const d=new Date(from.getFullYear(),from.getMonth(),from.getDate()+i).getDay();if(d!==0&&d!==6)weekdays++;}
+    render(number(total)+'일',[['시작',fmt(from)],['끝',fmt(to)],['주 단위',`${Math.floor(total/7)}주 ${total%7}일`],['대략 개월 수',number(total/30.4375,1)+'개월'],['평일 수 (주말 제외)',number(weekdays)+'일']]);
+  },
+  'discharge-date':()=>{
+    const enlist=parseDate('enlist');
+    if(!enlist){alert('입대일을 입력해 주세요.');return;}
+    const months=parseInt(selected('branch'),10);
+    const discharge=new Date(enlist.getFullYear(),enlist.getMonth()+months,enlist.getDate()-1);
+    const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    const total=Math.round((discharge-enlist)/dayMs)+1;
+    const served=Math.min(total,Math.max(0,Math.round((today-enlist)/dayMs)+1));
+    const left=Math.max(0,Math.round((discharge-today)/dayMs));
+    const weekday=['일','월','화','수','목','금','토'][discharge.getDay()];
+    render(`${discharge.getFullYear()}년 ${discharge.getMonth()+1}월 ${discharge.getDate()}일 (${weekday})`,[['복무기간',months+'개월'],['전체 복무일수',number(total)+'일'],['오늘까지 복무',today<enlist?'입대 전':number(served)+'일'],['남은 날',today>discharge?'전역 완료':number(left)+'일'],['진행률',number(Math.min(100,served/total*100),1)+'%']]);
+  },
+  'unit-converter':()=>{
+    const type=selected('type'),amount=value('amount'),from=selected('from'),to=selected('to');
+    const unit=UNITS[type];
+    const label=code=>unit.units.find(u=>u[0]===code)?.[1]||code;
+    if(type==='temperature'){
+      const c=from==='C'?amount:from==='F'?(amount-32)*5/9:amount-273.15;
+      const out=code=>code==='C'?c:code==='F'?c*9/5+32:c+273.15;
+      render(`${number(out(to),2)} ${label(to)}`,unit.units.map(([code,name])=>[name,number(out(code),2)]));
+      return;
+    }
+    const baseValue=amount*unit.factor[from];
+    render(`${number(baseValue/unit.factor[to],6)} ${label(to)}`,unit.units.map(([code,name])=>[name,number(baseValue/unit.factor[code],6)]));
+  },
+  'pet-age':()=>{
+    const pet=selected('pet'),years=Math.max(0,value('years'));
+    const perYear={small:4,medium:5,large:6,cat:4}[pet];
+    const human=years<=1?years*15:years<=2?15+(years-1)*9:24+(years-2)*perYear;
+    const seniorFrom=pet==='large'?6:pet==='medium'?7:pet==='cat'?11:8;
+    const stage=years<1?'성장기':years<3?'청년기':years<seniorFrom?'성년기':'노령기';
+    render(`약 ${number(human)}세`,[['반려동물 나이',number(years,1)+'살'],['2살 이후 1년당',`사람 나이 +${perYear}세`],['생애 단계',stage],['노령기 시작 무렵',`${seniorFrom}살`]]);
+  },
+  'gpa-converter':()=>{
+    const gpa=value('gpa'),from=Number(selected('from')),to=Number(selected('to'));
+    if(gpa<0||gpa>from){alert(`학점은 0부터 ${from} 사이로 입력해 주세요.`);return;}
+    const ratio=gpa/from;
+    render(`${number(ratio*to,2)} / ${to}`,[['백분율',number(ratio*100,1)+'%'],['4.5 만점',number(ratio*4.5,2)],['4.3 만점',number(ratio*4.3,2)],['4.0 만점',number(ratio*4,2)],['100점 만점',number(ratio*100,1)]]);
+  },
+  'taxi-fare':()=>{
+    const distance=Math.max(0,value('distance')),slow=Math.max(0,value('slow')),rate=Number(selected('time'));
+    const distanceFare=Math.ceil(Math.max(0,distance-1.6)*1000/131)*100;
+    const timeFare=Math.floor(slow*60/30)*100;
+    const base=Math.round(4800*rate/100)*100;
+    const total=Math.round((4800+distanceFare+timeFare)*rate/100)*100;
+    render(won(total),[['기본요금 (1.6km)',won(base)],['거리요금',won(distanceFare*rate)],['시간요금 (저속·정차)',won(timeFare*rate)],['심야할증',rate>1?number((rate-1)*100)+'%':'없음']]);
   }
 };
+
+const UNITS={
+  length:{factor:{mm:.001,cm:.01,m:1,km:1000,in:.0254,ft:.3048,yd:.9144,mi:1609.344,ja:10/33},units:[['mm','밀리미터 (mm)'],['cm','센티미터 (cm)'],['m','미터 (m)'],['km','킬로미터 (km)'],['in','인치 (in)'],['ft','피트 (ft)'],['yd','야드 (yd)'],['mi','마일 (mi)'],['ja','자 (尺)']]},
+  weight:{factor:{mg:1e-6,g:.001,kg:1,t:1000,oz:.028349523125,lb:.45359237,geun:.6,don:.00375},units:[['mg','밀리그램 (mg)'],['g','그램 (g)'],['kg','킬로그램 (kg)'],['t','톤 (t)'],['oz','온스 (oz)'],['lb','파운드 (lb)'],['geun','근 (600g)'],['don','돈 (3.75g)']]},
+  area:{factor:{cm2:1e-4,m2:1,pyeong:400/121,ha:10000,km2:1e6,ft2:.09290304,acre:4046.8564224},units:[['cm2','제곱센티미터 (㎠)'],['m2','제곱미터 (㎡)'],['pyeong','평'],['ha','헥타르 (ha)'],['km2','제곱킬로미터 (㎢)'],['ft2','제곱피트 (ft²)'],['acre','에이커']]},
+  volume:{factor:{ml:.001,l:1,m3:1000,cup:.2365882365,gal:3.785411784,doe:1.8039},units:[['ml','밀리리터 (mL)'],['l','리터 (L)'],['m3','세제곱미터 (㎥)'],['cup','컵 (US)'],['gal','갤런 (US)'],['doe','되 (약 1.8L)']]},
+  temperature:{units:[['C','섭씨 (℃)'],['F','화씨 (℉)'],['K','켈빈 (K)']]}
+};
+
+// 날짜 칸이 비어 있으면 오늘 날짜로 채우고, 단위 변환기는 종류에 맞게 단위 목록을 바꾼다.
+document.addEventListener('DOMContentLoaded',()=>{
+  const now=new Date(),iso=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  document.querySelectorAll('input[type=date]').forEach(input=>{if(!input.value)input.value=iso;});
+  if(document.body.dataset.calc==='unit-converter'){
+    const defaults={length:['m','ft'],weight:['kg','lb'],area:['m2','pyeong'],volume:['l','gal'],temperature:['C','F']};
+    const fill=()=>{
+      const type=selected('type'),[a,b]=defaults[type];
+      const options=UNITS[type].units.map(([code,name])=>`<option value="${code}">${name}</option>`).join('');
+      $('from').innerHTML=options;$('to').innerHTML=options;$('from').value=a;$('to').value=b;
+    };
+    $('type').addEventListener('change',fill);
+    fill();
+  }
+});

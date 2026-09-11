@@ -80,6 +80,8 @@ footer{background:#1a1a18;color:rgba(255,255,255,.5);text-align:center;padding:2
 footer strong{color:#fff;}
 @media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.related-grid{grid-template-columns:1fr;}}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/legacy-skin.css">
 </head>
 <body>
 <header>
@@ -90,7 +92,7 @@ footer strong{color:#fff;}
 <div class="wrap"><div class="calc-card">
   <div class="card-hero">
     <span class="card-tag">생활·건강</span>
-    <h1>전기세 계산기 ⚡</h1>
+    <h1>전기세 계산기</h1>
     <p>2026년 한전 주택용 전기요금 누진세 기준으로 예상 전기요금을 계산합니다</p>
   </div>
   <div class="card-body">
@@ -123,7 +125,7 @@ footer strong{color:#fff;}
   </div>
   </div>
   <div class="desc-section">
-    <h2>📌 2026년 주택용 전기요금 누진제</h2>
+    <h2>2026년 주택용 전기요금 누진제</h2>
     <table class="rate-table">
       <tr><th>구분</th><th>사용 구간</th><th>기본요금</th><th>kWh당 단가</th></tr>
       <tr><td>1단계</td><td>200kWh 이하</td><td>910원</td><td>120.0원</td></tr>
@@ -138,10 +140,10 @@ footer strong{color:#fff;}
 
 
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
-    <a href="../coffee-savings/" class="related-btn">☕ 커피값 절약</a>
-    <a href="../bmi/" class="related-btn">⚖️ BMI 계산기</a>
-    <a href="../loan/" class="related-btn">🏧 대출 이자</a>
-    <a href="../vat/" class="related-btn">🧾 부가세 계산기</a>
+    <a href="../coffee-savings/" class="related-btn">커피값 절약</a>
+    <a href="../bmi/" class="related-btn">BMI 계산기</a>
+    <a href="../loan/" class="related-btn">대출 이자</a>
+    <a href="../vat/" class="related-btn">부가세 계산기</a>
   </div></div>
 
 <div style="padding:0 28px 24px;">
@@ -220,4 +222,5 @@ function toggleDark(){var d=document.documentElement;var isDark=d.getAttribute('
 (function(){var s=localStorage.getItem('gyesanwang_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',s);document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('darkToggle');if(b)b.textContent=s==='dark'?'☀️':'🌙';});})();
 </script>
 <script src="../assets/money-inputs.js"></script>
+<script src="../assets/site.js"></script>
 </body></html>

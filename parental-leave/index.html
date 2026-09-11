@@ -80,6 +80,8 @@ footer{background:#1a1a18;color:rgba(255,255,255,.5);text-align:center;padding:2
 footer strong{color:#fff;}
 @media(max-width:600px){.wrap{padding:16px 12px 40px;}.card-body,.card-hero,.desc-section,.related{padding-left:16px;padding-right:16px;}.field-row{grid-template-columns:1fr;}.month-grid{grid-template-columns:repeat(2,1fr);}.related-grid{grid-template-columns:1fr;}}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/legacy-skin.css">
 </head>
 <body>
 <header>
@@ -133,10 +135,10 @@ footer strong{color:#fff;}
   </div>
   </div>
   <div class="desc-section">
-    <h2>👶 육아휴직 급여는 생활비 계획이랑 같이 보셔야 해요</h2>
+    <h2>육아휴직 급여는 생활비 계획이랑 같이 보셔야 해요</h2>
         <p>육아휴직 급여는 제도만 보면 “몇 퍼센트 지급”처럼 단순해 보여요. 그런데 실제로는 상한선, 하한선, 기간별 지급 구조를 같이 봐야 체감이 잡혀요.</p>
     <p>특히 휴직 전후로 월급 흐름이 바뀌고, 연차나 복직 시점까지 연결되기 때문에 급여 숫자만 따로 보면 오히려 헷갈릴 수 있어요. 그래서 휴직 계획과 같이 보는 게 좋아요.</p>
-    <h2>🧮 계산기 숫자를 이렇게 읽어보세요</h2>
+    <h2>계산기 숫자를 이렇게 읽어보세요</h2>
         <p>기준 급여를 넣으면 예상 지급액을 빠르게 볼 수 있어요. 다만 실제로는 휴직 시점, 회사 신고 시기, 제도 세부 요건에 따라 지급 흐름이 달라질 수 있어요.</p>
     <p>그래서 계산기 결과는 “대략 이 정도 받겠구나” 하는 감을 잡는 용도로 먼저 보고, 휴직 기간 동안 고정 지출을 어떻게 버틸지 같이 적어보면 훨씬 현실적이에요.</p>
     <h3>예외로 꼭 같이 봐야 하는 조건</h3>
@@ -174,8 +176,8 @@ footer strong{color:#fff;}
   <div class="related">
     <h2>함께 읽으면 좋은 가이드</h2>
     <div class="related-grid">
-      <a href="../guides/annual-leave/" class="related-btn">📘 휴직 전 연차 정리 포인트</a>
-      <a href="../guides/" class="related-btn">🗂 계산왕 가이드 모아보기</a>
+      <a href="../guides/annual-leave/" class="related-btn">휴직 전 연차 정리 포인트</a>
+      <a href="../guides/" class="related-btn">계산왕 가이드 모아보기</a>
       <a href="../salary/" class="related-btn">실수령액 계산기</a>
       <a href="../annual-leave/" class="related-btn">연차 계산기</a>
     </div>
@@ -183,10 +185,10 @@ footer strong{color:#fff;}
 
   <div class="trust-box" style="padding:0 28px 20px;"><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;"><h2 style="font-size:14px;font-weight:800;margin-bottom:10px;">이 계산의 기준과 참고 링크</h2><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">기준 출처: 고용노동부, 고용24, 육아휴직 급여 제도 안내</p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">관련 가이드: <a href="../guides/annual-leave/" style="color:var(--text);font-weight:700;text-decoration:none;">입사 첫해 연차와 회계연도 기준 연차는 어떻게 다른가요?</a>, <a href="../guides/unemployment/" style="color:var(--text);font-weight:700;text-decoration:none;">자진퇴사인데도 실업급여를 받을 수 있는 예외가 있나요?</a></p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin:0;">운영 정보: <a href="../editorial-policy/" style="color:var(--text);font-weight:700;text-decoration:none;">편집 원칙</a> · <a href="../sources/" style="color:var(--text);font-weight:700;text-decoration:none;">주요 참고 출처</a></p></div></div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
-    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
-    <a href="../unemploy/" class="related-btn">📋 실업급여</a>
-    <a href="../annual-leave/" class="related-btn">📅 연차 계산기</a>
-    <a href="../retire/" class="related-btn">📦 퇴직금</a>
+    <a href="../salary/" class="related-btn">연봉 실수령액</a>
+    <a href="../unemploy/" class="related-btn">실업급여</a>
+    <a href="../annual-leave/" class="related-btn">연차 계산기</a>
+    <a href="../retire/" class="related-btn">퇴직금</a>
   </div></div>
 
 <div style="padding:0 28px 24px;">
@@ -265,4 +267,5 @@ function toggleDark(){var d=document.documentElement;var isDark=d.getAttribute('
 (function(){var s=localStorage.getItem('gyesanwang_theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',s);document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('darkToggle');if(b)b.textContent=s==='dark'?'☀️':'🌙';});})();
 </script>
 <script src="../assets/money-inputs.js"></script>
+<script src="../assets/site.js"></script>
 </body></html>

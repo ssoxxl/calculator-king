@@ -1,5 +1,6 @@
 // 홈 화면(index.html)과 sitemap.xml을 site-catalog.mjs 기준으로 다시 만든다.
 // 사용: node tools/build-home.mjs
+// 주의: head의 광고·GA·Google Ads 스니펫은 원래 모양 그대로 유지한다.
 import {readFile,writeFile,readdir,access} from 'node:fs/promises';
 import {execSync} from 'node:child_process';
 import path from 'node:path';
@@ -12,6 +13,7 @@ const bySlug=Object.fromEntries(calculators.map(c=>[c.slug,c]));
 const catById=Object.fromEntries(categories.map(c=>[c.id,c]));
 const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date());
 const buildMonth=Number(today.slice(5,7));
+const VISIBLE=6; // 카테고리마다 처음 보이는 계산기 수 (나머지는 '더 보기')
 
 for(const c of calculators){
   await access(path.join(root,c.slug,'index.html')).catch(()=>{throw new Error(`계산기 페이지 없음: ${c.slug}`)});
@@ -33,6 +35,7 @@ for(const slug of guideDirs){
 }
 
 const icon=(d,size=20)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+const logoMark='<svg class="mark" viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const count=id=>calculators.filter(c=>c.cat===id).length;
 
 const catTiles=categories.map(c=>`<a class="cat" href="#cat-${c.id}" data-cat="${c.id}"><span class="cat-icon">${icon(c.icon)}</span><span class="cat-text"><strong>${c.name}</strong><span>${c.blurb}</span></span><span class="cat-count">${count(c.id)}</span></a>`).join('');
@@ -48,8 +51,11 @@ const seasonData=JSON.stringify(Object.fromEntries(Object.entries(seasons).map((
 const popularChips=popular.map(slug=>`<a href="/${slug}/">${esc(bySlug[slug].name.replace(/ 계산기$/,''))}</a>`).join('');
 
 const directory=categories.map(c=>{
-  const items=calculators.filter(x=>x.cat===c.id).map(x=>`<li><a href="/${x.slug}/"><strong>${esc(x.name)}</strong><span>${esc(x.desc)}</span></a></li>`).join('');
-  return `<section class="dir" id="cat-${c.id}" data-cat="${c.id}"><div class="dir-head"><span class="cat-icon">${icon(c.icon)}</span><h2>${c.name}</h2><span class="dir-count">${count(c.id)}개</span></div><ul class="dir-list">${items}</ul></section>`;
+  const list=calculators.filter(x=>x.cat===c.id);
+  const items=list.map(x=>`<li><a href="/${x.slug}/"><strong>${esc(x.name)}</strong><span>${esc(x.desc)}</span></a></li>`).join('');
+  const hidden=list.length-VISIBLE;
+  const more=hidden>0?`<button class="dir-more" type="button" aria-expanded="false" data-label="${hidden}개 더 보기">${hidden}개 더 보기</button>`:'';
+  return `<section class="dir" id="cat-${c.id}" data-cat="${c.id}"><div class="dir-head"><span class="cat-icon">${icon(c.icon)}</span><h2>${c.name}</h2><span class="dir-count">${list.length}개</span></div><ul class="dir-list">${items}</ul>${more}</section>`;
 }).join('');
 
 const guideList=guides.map(g=>`<li><a href="/guides/${g.slug}/">${esc(g.title)}</a></li>`).join('');
@@ -61,7 +67,7 @@ const itemList=JSON.stringify({'@context':'https://schema.org','@type':'Collecti
 const adUnit=`<div class="ad"><span class="ad-label">광고</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8390635644947402" data-ad-slot="8039990741" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>`;
 
 const title='계산왕 - 생활 계산기 모음 | 연봉·세금·대출·부동산·날짜';
-const description=`연봉 실수령액, 퇴직금, 근로장려금, 재산세, 대출 이자, 만나이까지 생활에 필요한 ${calculators.length}개 계산기를 계산식과 기준 출처와 함께 무료로 이용하세요.`;
+const description=`연봉 실수령액, 퇴직금, 근로장려금, 재산세, 날짜 계산, 단위 변환까지 생활에 필요한 ${calculators.length}개 계산기를 계산식과 기준 출처와 함께 무료로 이용하세요.`;
 
 const html=`<!DOCTYPE html>
 <html lang="ko">
@@ -111,7 +117,7 @@ const html=`<!DOCTYPE html>
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="/" aria-label="계산왕 홈"><svg class="mark" viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="brand-name">계산왕</span></a>
+    <a class="brand" href="/" aria-label="계산왕 홈">${logoMark}<span class="brand-name">계산왕</span></a>
     <nav class="nav" aria-label="카테고리">${categories.map(c=>`<a href="#cat-${c.id}">${c.name}</a>`).join('')}</nav>
     <button class="icon-btn" id="themeBtn" type="button" aria-label="화면 테마 전환"><span class="theme-sun">${icon('M12 4V2M12 22v-2M4 12H2M22 12h-2M5 5 3.6 3.6M20.4 20.4 19 19M5 19l-1.4 1.4M20.4 3.6 19 5M12 16a4 4 0 100-8 4 4 0 000 8z',18)}</span><span class="theme-moon">${icon('M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z',18)}</span></button>
   </div>
@@ -119,16 +125,34 @@ const html=`<!DOCTYPE html>
 
 <main>
   <section class="hero">
-    <p class="eyebrow">생활 계산기 ${calculators.length}개 · 계산식과 출처 공개</p>
-    <h1>생활에 필요한 계산을<br>한곳에서 바로</h1>
-    <p class="lead">월급과 세금부터 대출, 집, 날짜와 건강까지. 필요한 계산을 검색 한 번으로 찾고, 계산식과 기준 출처를 함께 확인하세요.</p>
-    <form class="search" id="searchForm" role="search" autocomplete="off">
-      <span class="search-icon">${icon('M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3',20)}</span>
-      <input id="searchInput" type="search" placeholder="어떤 계산이 필요하세요? 예: 퇴직금, 재산세, 만나이" aria-label="계산기 검색" aria-controls="suggest" aria-expanded="false" role="combobox" aria-autocomplete="list">
-      <button type="submit">검색</button>
-      <ul class="suggest" id="suggest" role="listbox" hidden></ul>
-    </form>
-    <div class="chips"><span>자주 찾는 계산</span>${popularChips}</div>
+    <div class="hero-main">
+      <p class="eyebrow">생활 계산기 ${calculators.length}개 · 계산식과 출처 공개</p>
+      <h1>생활에 필요한 계산을<br>한곳에서 바로</h1>
+      <p class="lead">월급과 세금부터 대출, 집, 날짜와 건강까지. 필요한 계산을 검색 한 번으로 찾고, 계산식과 기준 출처를 함께 확인하세요.</p>
+      <form class="search" id="searchForm" role="search" autocomplete="off">
+        <span class="search-icon">${icon('M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3',20)}</span>
+        <input id="searchInput" type="search" placeholder="어떤 계산이 필요하세요? 예: 퇴직금, 재산세, 만나이" aria-label="계산기 검색" aria-controls="suggest" aria-expanded="false" role="combobox" aria-autocomplete="list">
+        <button type="submit">검색</button>
+        <ul class="suggest" id="suggest" role="listbox" hidden></ul>
+      </form>
+      <div class="chips"><span>자주 찾는 계산</span>${popularChips}</div>
+      <div class="chips recent" id="recent" hidden><span>최근 본 계산</span><div class="recent-links"></div></div>
+    </div>
+
+    <aside class="quick" aria-labelledby="quickTitle">
+      <p class="quick-eyebrow">바로 계산</p>
+      <h2 id="quickTitle">내 연봉, 한 달에 얼마 받을까?</h2>
+      <form class="quick-form" id="quickForm" autocomplete="off">
+        <label for="quickSalary">연봉 (세전)</label>
+        <div class="quick-input"><input id="quickSalary" inputmode="numeric" placeholder="예: 45,000,000"><span>원</span></div>
+        <label for="quickFamily">공제대상가족 (본인 포함)</label>
+        <select id="quickFamily"><option value="1">1명</option><option value="2">2명</option><option value="3">3명</option><option value="4">4명</option><option value="5">5명</option></select>
+        <button type="submit">월 실수령액 보기</button>
+      </form>
+      <div class="quick-out" id="quickOut" aria-live="polite" hidden></div>
+      <a class="quick-more" href="/salary/">4대보험·세금 내역 자세히 보기 →</a>
+      <p class="quick-note">비과세 식대 월 20만원, 2026년 4대보험 요율, 국세청 간이세액표 기준</p>
+    </aside>
   </section>
 
   <section class="cats" aria-label="카테고리별 계산기">${catTiles}</section>

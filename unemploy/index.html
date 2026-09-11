@@ -41,6 +41,8 @@ body{transition:background .3s,color .3s;}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/legacy-skin.css">
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -69,10 +71,10 @@ body{transition:background .3s,color .3s;}
   </div>
   </div>
   <div class="desc-section">
-    <h2>📋 실업급여는 금액보다 자격부터 봐야 해요</h2>
+    <h2>실업급여는 금액보다 자격부터 봐야 해요</h2>
         <p>계산기에서 금액이 괜찮게 나와도, 실제로 받을 수 있는지는 따로 확인해야 해요. 실업급여는 퇴사 사유, 고용보험 가입기간, 구직 활동 여부가 같이 맞아야 하거든요.</p>
     <p>특히 자진퇴사면 바로 안 된다고 생각하는 경우가 많아요. 그런데 예외 사유가 인정되는 경우도 있어요. 그래서 포기하기 전에 사유와 서류를 먼저 정리해 두는 게 좋아요.</p>
-    <h2>🧮 금액은 이렇게 이해하면 쉬워요</h2>
+    <h2>금액은 이렇게 이해하면 쉬워요</h2>
         <p>실업급여는 1일 수급액과 소정급여일수를 같이 봐야 해요. 하루에 얼마 받는지도 중요하지만, 며칠 동안 받을 수 있느냐에 따라 총액 차이가 커져요.</p>
     <p>같은 월급을 받았더라도 나이와 가입기간이 다르면 총 수급액이 달라질 수 있어요. 그래서 계산기 숫자는 시작점으로 보고, 실제 자격 여부는 이직확인서와 퇴사 사유까지 같이 보는 게 맞아요.</p>
     <h3>예외로 꼭 같이 봐야 하는 상황</h3>
@@ -118,8 +120,8 @@ body{transition:background .3s,color .3s;}
   <div class="related">
     <h2>함께 읽으면 좋은 가이드</h2>
     <div class="related-grid">
-      <a href="../guides/unemployment/" class="related-btn">📘 자진퇴사 예외와 수급 조건</a>
-      <a href="../guides/retirement-pay/" class="related-btn">📦 퇴직금과 실업급여 준비 순서</a>
+      <a href="../guides/unemployment/" class="related-btn">자진퇴사 예외와 수급 조건</a>
+      <a href="../guides/retirement-pay/" class="related-btn">퇴직금과 실업급여 준비 순서</a>
       <a href="../retire/" class="related-btn">퇴직금 계산기</a>
       <a href="../salary/" class="related-btn">실수령액 계산기</a>
     </div>
@@ -127,10 +129,10 @@ body{transition:background .3s,color .3s;}
 
   <div class="trust-box" style="padding:0 28px 20px;"><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;"><h2 style="font-size:14px;font-weight:800;margin-bottom:10px;">이 계산의 기준과 참고 링크</h2><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">기준 출처: 고용노동부, 고용24, 고용보험 제도 안내</p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">관련 가이드: <a href="../guides/unemployment/" style="color:var(--text);font-weight:700;text-decoration:none;">자진퇴사인데도 실업급여를 받을 수 있는 예외가 있나요?</a>, <a href="../guides/retirement-pay/" style="color:var(--text);font-weight:700;text-decoration:none;">퇴직금 계산에서 평균임금에 포함되는 항목은 무엇인가요?</a></p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin:0;">운영 정보: <a href="../editorial-policy/" style="color:var(--text);font-weight:700;text-decoration:none;">편집 원칙</a> · <a href="../sources/" style="color:var(--text);font-weight:700;text-decoration:none;">주요 참고 출처</a></p></div></div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
-    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
-    <a href="../retire/" class="related-btn">📦 퇴직금</a>
-    <a href="../savings/" class="related-btn">🏦 적금 만기금액</a>
-    <a href="../stock/" class="related-btn">📈 주식 물타기</a>
+    <a href="../salary/" class="related-btn">연봉 실수령액</a>
+    <a href="../retire/" class="related-btn">퇴직금</a>
+    <a href="../savings/" class="related-btn">적금 만기금액</a>
+    <a href="../stock/" class="related-btn">주식 물타기</a>
   </div></div>
 
 <div style="padding:0 28px 24px;">

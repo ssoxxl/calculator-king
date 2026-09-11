@@ -92,6 +92,8 @@ body{transition:background .3s,color .3s;}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/legacy-skin.css">
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -126,10 +128,10 @@ body{transition:background .3s,color .3s;}
   </div>
   </div>
   <div class="desc-section">
-    <h2>🏦 대출은 금리만 보면 반쪽짜리 비교예요</h2>
+    <h2>대출은 금리만 보면 반쪽짜리 비교예요</h2>
         <p>대출 비교할 때 제일 먼저 보이는 건 금리죠. 그런데 실제로는 월 상환 구조, 중도상환수수료, 상환 기간이 같이 중요해요. 금리만 낮다고 무조건 유리한 건 아니에요.</p>
     <p>특히 월급일에 맞춰 생활비를 관리해야 하는 직장인이라면, 매달 내는 금액이 얼마나 버틸 만한지가 정말 중요해요. 그래서 계산기 결과도 총 이자뿐 아니라 월 상환액을 같이 보는 게 좋아요.</p>
-    <h2>🧮 이렇게 보면 훨씬 쉬워요</h2>
+    <h2>이렇게 보면 훨씬 쉬워요</h2>
         <p>원리금균등은 매달 비슷하게 내서 관리가 쉽고, 원금균등은 초반 부담이 크지만 갈수록 줄어들어요. 만기일시상환은 지금은 편해 보여도 만기에 원금을 크게 갚아야 해서 계획이 분명해야 해요.</p>
     <p>그래서 대출은 “제일 싼 상품 찾기”보다 “내 생활비 구조에 맞는 상품 찾기”에 더 가까워요. 계산기는 그걸 빠르게 비교하는 데 딱 좋아요.</p>
     <h3>예외로 꼭 같이 봐야 하는 조건</h3>
@@ -167,8 +169,8 @@ body{transition:background .3s,color .3s;}
   <div class="related">
     <h2>함께 읽으면 좋은 가이드</h2>
     <div class="related-grid">
-      <a href="../guides/loan-type/" class="related-btn">📘 상환 방식별 차이 정리</a>
-      <a href="../guides/" class="related-btn">🗂 계산왕 가이드 모아보기</a>
+      <a href="../guides/loan-type/" class="related-btn">상환 방식별 차이 정리</a>
+      <a href="../guides/" class="related-btn">계산왕 가이드 모아보기</a>
       <a href="../salary/" class="related-btn">실수령액 계산기</a>
       <a href="../deposit/" class="related-btn">예금 이자 계산기</a>
     </div>
@@ -176,10 +178,10 @@ body{transition:background .3s,color .3s;}
 
   <div class="trust-box" style="padding:0 28px 20px;"><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;"><h2 style="font-size:14px;font-weight:800;margin-bottom:10px;">이 계산의 기준과 참고 링크</h2><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">기준 출처: 금융감독원, 은행권 대출 상환 방식 안내</p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">관련 가이드: <a href="../guides/loan-type/" style="color:var(--text);font-weight:700;text-decoration:none;">원리금균등, 원금균등, 만기일시상환은 어떻게 다를까요?</a>, <a href="../guides/salary-negotiation/" style="color:var(--text);font-weight:700;text-decoration:none;">연봉 협상 전에 세전보다 실수령액을 먼저 봐야 하는 이유</a></p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin:0;">운영 정보: <a href="../editorial-policy/" style="color:var(--text);font-weight:700;text-decoration:none;">편집 원칙</a> · <a href="../sources/" style="color:var(--text);font-weight:700;text-decoration:none;">주요 참고 출처</a></p></div></div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
-    <a href="../deposit/" class="related-btn">💰 예금 이자</a>
-    <a href="../jeonse/" class="related-btn">🏠 전월세 전환율</a>
-    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
-    <a href="../yangdo/" class="related-btn">🏛️ 양도소득세</a>
+    <a href="../deposit/" class="related-btn">예금 이자</a>
+    <a href="../jeonse/" class="related-btn">전월세 전환율</a>
+    <a href="../salary/" class="related-btn">연봉 실수령액</a>
+    <a href="../yangdo/" class="related-btn">양도소득세</a>
   </div></div>
 
 <div style="padding:0 28px 24px;">

@@ -28,4 +28,13 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncButton);
   else syncButton();
+
+  // 최근 본 계산기 (홈 화면에 표시)
+  const slug=location.pathname.split('/').filter(Boolean)[0];
+  if(slug&&document.querySelector('.calc-card')){
+    try{
+      const list=JSON.parse(localStorage.getItem('gyesanwang_recent')||'[]').filter(s=>s!==slug);
+      localStorage.setItem('gyesanwang_recent',JSON.stringify([slug,...list].slice(0,8)));
+    }catch(e){}
+  }
 })();

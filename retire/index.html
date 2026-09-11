@@ -48,6 +48,8 @@ body{transition:background .3s,color .3s;}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/legacy-skin.css">
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -84,10 +86,10 @@ body{transition:background .3s,color .3s;}
   </div>
   </div>
   <div class="desc-section">
-    <h2>📦 퇴직금이 헷갈릴 때 보시면 좋아요</h2>
+    <h2>퇴직금이 헷갈릴 때 보시면 좋아요</h2>
         <p>퇴직금은 공식만 보면 단순해 보여요. 그런데 실제로는 평균임금에 뭐가 들어가는지, 퇴사 직전 3개월 급여가 어땠는지에 따라 결과가 꽤 달라져요.</p>
     <p>특히 상여금, 연차수당, 통상임금 같은 말이 나오면 더 어렵게 느껴지죠. 그래서 계산기 숫자만 보는 것보다, 어떤 기준 급여로 계산되는지 같이 보는 게 중요해요.</p>
-    <h2>🧮 어디를 같이 봐야 하냐면요</h2>
+    <h2>어디를 같이 봐야 하냐면요</h2>
         <p>퇴직금은 보통 평균임금 × 30일 × 근속일수 ÷ 365 방식으로 계산해요. 여기서 핵심은 평균임금이에요. 퇴사 직전 3개월 급여 흐름이 바뀌었으면 결과도 같이 흔들릴 수 있어요.</p>
     <p>예를 들어 퇴사 직전 급여가 올랐거나, 반대로 휴직이나 무급 기간이 끼어 있었다면 계산 결과가 달라질 수 있어요. 그래서 계산기 입력 전에는 직전 3개월 급여 구조부터 확인해 두면 좋아요.</p>
     <h3>예외로 꼭 같이 봐야 하는 경우</h3>
@@ -131,8 +133,8 @@ body{transition:background .3s,color .3s;}
   <div class="related">
     <h2>함께 읽으면 좋은 가이드</h2>
     <div class="related-grid">
-      <a href="../guides/retirement-pay/" class="related-btn">📘 평균임금 포함 항목 정리</a>
-      <a href="../guides/unemployment/" class="related-btn">📋 퇴사 후 수급 조건 체크</a>
+      <a href="../guides/retirement-pay/" class="related-btn">평균임금 포함 항목 정리</a>
+      <a href="../guides/unemployment/" class="related-btn">퇴사 후 수급 조건 체크</a>
       <a href="../average-wage/" class="related-btn">평균임금 계산기</a>
       <a href="../ordinary-wage/" class="related-btn">통상임금 계산기</a>
     </div>
@@ -140,10 +142,10 @@ body{transition:background .3s,color .3s;}
 
   <div class="trust-box" style="padding:0 28px 20px;"><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;"><h2 style="font-size:14px;font-weight:800;margin-bottom:10px;">이 계산의 기준과 참고 링크</h2><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">기준 출처: 고용노동부, 근로기준법 퇴직급여 안내</p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:8px;">관련 가이드: <a href="../guides/retirement-pay/" style="color:var(--text);font-weight:700;text-decoration:none;">퇴직금 계산에서 평균임금에 포함되는 항목은 무엇인가요?</a>, <a href="../guides/unemployment/" style="color:var(--text);font-weight:700;text-decoration:none;">자진퇴사인데도 실업급여를 받을 수 있는 예외가 있나요?</a></p><p style="font-size:13px;line-height:1.8;color:var(--muted);margin:0;">운영 정보: <a href="../editorial-policy/" style="color:var(--text);font-weight:700;text-decoration:none;">편집 원칙</a> · <a href="../sources/" style="color:var(--text);font-weight:700;text-decoration:none;">주요 참고 출처</a></p></div></div>
   <div class="related"><h2>관련 계산기</h2><div class="related-grid">
-    <a href="../average-wage/" class="related-btn">📘 평균임금 계산기</a>
-    <a href="../ordinary-wage/" class="related-btn">⏱️ 통상임금 계산기</a>
-    <a href="../salary/" class="related-btn">💼 연봉 실수령액</a>
-    <a href="../unemploy/" class="related-btn">📋 실업급여</a>
+    <a href="../average-wage/" class="related-btn">평균임금 계산기</a>
+    <a href="../ordinary-wage/" class="related-btn">통상임금 계산기</a>
+    <a href="../salary/" class="related-btn">연봉 실수령액</a>
+    <a href="../unemploy/" class="related-btn">실업급여</a>
   </div></div>
 
 <div style="padding:0 28px 24px;">

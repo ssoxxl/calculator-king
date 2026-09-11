@@ -146,3 +146,13 @@ window.toggleTheme=()=>{
     format();input.addEventListener('input',format);input.addEventListener('focus',()=>input.select());
   }));
 })();
+
+// 최근 본 계산기 (홈 화면에 표시)
+(function(){
+  const slug=document.body.dataset.calc;
+  if(!slug)return;
+  try{
+    const list=JSON.parse(localStorage.getItem('gyesanwang_recent')||'[]').filter(s=>s!==slug);
+    localStorage.setItem('gyesanwang_recent',JSON.stringify([slug,...list].slice(0,8)));
+  }catch(e){}
+})();

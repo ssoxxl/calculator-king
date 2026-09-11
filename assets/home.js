@@ -73,6 +73,75 @@
     list.innerHTML=items.map(i=>`<li><a href="/${i.s}/" data-cat="${i.c}"><strong>${esc(i.n)}</strong><span>${esc(i.note)}</span></a></li>`).join('');
   })();
 
+  // 최근 본 계산기
+  (function(){
+    const box=$('#recent');
+    if(!box)return;
+    let slugs=[];
+    try{slugs=JSON.parse(localStorage.getItem('gyesanwang_recent')||'[]');}catch(e){}
+    const bySlug=Object.fromEntries(data.map(d=>[d.s,d]));
+    const items=slugs.map(s=>bySlug[s]).filter(Boolean).slice(0,6);
+    if(!items.length)return;
+    box.querySelector('.recent-links').innerHTML=items.map(i=>`<a href="/${i.s}/">${esc(i.n.replace(/ 계산기$/,''))}</a>`).join('');
+    box.hidden=false;
+  })();
+
+  // 카테고리 목록 더 보기
+  document.querySelectorAll('.dir-more').forEach(btn=>btn.addEventListener('click',()=>{
+    const open=btn.closest('.dir').classList.toggle('open');
+    btn.textContent=open?'접기':btn.dataset.label;
+    btn.setAttribute('aria-expanded',String(open));
+  }));
+
+  // 연봉 실수령액 빠른 계산 (연봉 실수령액 계산기와 같은 방식: 비과세 20만원, 간이세액표)
+  (function(){
+    const form=$('#quickForm');
+    if(!form)return;
+    const salaryInput=$('#quickSalary'),family=$('#quickFamily'),out=$('#quickOut');
+    const won=n=>Math.round(n).toLocaleString('ko-KR');
+    const f10=n=>Math.floor(Math.round(n*1000)/1000/10)*10;
+    let tablePromise=null;
+    const loadTable=()=>tablePromise||(tablePromise=new Promise((resolve,reject)=>{
+      if(window.WITHHOLDING_TABLE){resolve();return;}
+      const script=document.createElement('script');
+      script.src='/assets/withholding-table.js';script.onload=resolve;script.onerror=reject;
+      document.head.appendChild(script);
+    }));
+    const lookup=(monthly,fam)=>{
+      const table=window.WITHHOLDING_TABLE,k=monthly/1000;
+      let tax=0;
+      if(k>=770&&k<10000){const row=table.rows.find(r=>k>=r[0]&&k<r[1]);tax=row?row[1+fam]:0;}
+      else if(k>=10000){
+        const base=table.top[fam-1];
+        if(monthly<=10000000)tax=base;
+        else if(monthly<=14000000)tax=base+(monthly-10000000)*.98*.35+25000;
+        else if(monthly<=28000000)tax=base+1397000+(monthly-14000000)*.98*.38;
+        else if(monthly<=30000000)tax=base+6610600+(monthly-28000000)*.98*.40;
+        else if(monthly<=45000000)tax=base+7394600+(monthly-30000000)*.40;
+        else if(monthly<=87000000)tax=base+13394600+(monthly-45000000)*.42;
+        else tax=base+31034600+(monthly-87000000)*.45;
+      }
+      return Math.floor(tax/10)*10;
+    };
+    salaryInput.addEventListener('input',()=>{const d=salaryInput.value.replace(/[^0-9]/g,'');salaryInput.value=d?Number(d).toLocaleString('ko-KR'):'';});
+    salaryInput.addEventListener('focus',()=>{loadTable().catch(()=>{});},{once:true});
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const annual=Number(salaryInput.value.replace(/,/g,''));
+      if(!annual){salaryInput.focus();return;}
+      try{await loadTable();}catch(err){out.textContent='세액표를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';out.hidden=false;return;}
+      const monthly=Math.floor(annual/12),taxable=Math.max(0,monthly-200000);
+      const pensionBase=Math.min(Math.max(Math.floor(taxable/1000)*1000,410000),6590000);
+      const health=f10(taxable*.03595);
+      const insurance=f10(pensionBase*.0475)+health+f10(health*.1314)+f10(taxable*.009);
+      const tax=lookup(taxable,Number(family.value)),local=f10(tax*.1);
+      const net=monthly-insurance-tax-local;
+      out.innerHTML=`<strong>${won(net)}원</strong><span>월 예상 실수령액 · 4대보험 ${won(insurance)}원 · 세금 ${won(tax+local)}원</span>`;
+      out.hidden=false;
+      try{gtag('event','quick_salary_calc');}catch(err){}
+    });
+  })();
+
   $('#themeBtn').addEventListener('click',()=>{
     const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
     document.documentElement.setAttribute('data-theme',next);

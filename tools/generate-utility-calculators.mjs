@@ -1,7 +1,9 @@
 import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {pages as morePages} from './calculator-pages-2026-09.mjs';
+import {pages as septemberPages} from './calculator-pages-2026-09.mjs';
+import {pages as lifePages} from './calculator-pages-life.mjs';
+const morePages=[...septemberPages,...lifePages];
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const f=(id,label,value,extra='')=>`<div class="field"><label for="${id}">${label}</label><input id="${id}" value="${value}" ${extra}></div>`;
