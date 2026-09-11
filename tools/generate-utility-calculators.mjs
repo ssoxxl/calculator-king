@@ -3,7 +3,8 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {pages as septemberPages} from './calculator-pages-2026-09.mjs';
 import {pages as lifePages} from './calculator-pages-life.mjs';
-const morePages=[...septemberPages,...lifePages];
+import {pages as demandPages} from './calculator-pages-2026-09b.mjs';
+const morePages=[...septemberPages,...lifePages,...demandPages];
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const f=(id,label,value,extra='')=>`<div class="field"><label for="${id}">${label}</label><input id="${id}" value="${value}" ${extra}></div>`;

@@ -316,6 +316,137 @@ window.EXTRA_CALCULATORS={
     render(number(dsr,1)+'%',[['적용금리 (스트레스 포함)',number(rate,2)+'%'],['신규대출 연 원리금',won(yearly)],['전체 연 원리금',won(existing+yearly)],['비교 한도',limit+'%'],['한도 내 연 상환 여력',won(Math.max(0,room))],['판정',dsr<=limit?'한도 이내':'한도 초과']]);
   },
 
+  'childcare-benefits':()=>{
+    const birth=parseDate('birth');
+    if(!birth){alert('아이 생년월일을 입력해 주세요.');return;}
+    const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    let months=(today.getFullYear()-birth.getFullYear())*12+(today.getMonth()-birth.getMonth());
+    if(today.getDate()<birth.getDate())months--;
+    const born=birth<=today,age=born?Math.max(0,months):0;
+    const region=Number(selected('region')),voucher=selected('order')==='1'?2e6:3e6,daycare=selected('daycare')==='yes';
+    const parental=m=>m<12?1e6:m<24?5e5:0;
+    const thisParental=born?parental(age):0,thisChild=born&&age<108?region:0;
+    let parentalLeft=0;
+    for(let m=age;m<24;m++)parentalLeft+=parental(m);
+    const childLeft=Math.max(0,108-age)*region;
+    render(won(thisParental+thisChild)+' / 이번 달',[
+      ['아이 개월 수',born?`${age}개월`:'출생 전'],
+      ['첫만남이용권 (1회, 바우처)',won(voucher)],
+      ['이번 달 부모급여',won(thisParental)+(daycare&&thisParental?' (어린이집 이용 시 보육료 차감)':'')],
+      ['이번 달 아동수당',won(thisChild)],
+      ['앞으로 받을 부모급여',won(parentalLeft)],
+      ['앞으로 받을 아동수당 (만 9세 전까지)',won(childLeft)],
+      ['출생부터 만 9세 전까지 총액',won(voucher+18e6+region*108)]
+    ]);
+  },
+  'work-hours':()=>{
+    const toMin=v=>{const [h,m]=String(v||'').split(':').map(Number);return Number.isFinite(h)?h*60+(m||0):NaN;};
+    const start=toMin($('start').value);
+    let end=toMin($('end').value);
+    if(!Number.isFinite(start)||!Number.isFinite(end)){alert('출근 시각과 퇴근 시각을 입력해 주세요.');return;}
+    if(end<=start)end+=1440;
+    const span=end-start,breakChoice=selected('breakMin');
+    const rest=breakChoice==='auto'?(span>=510?60:span>=270?30:0):Number(breakChoice);
+    const work=Math.max(0,span-rest),days=Math.min(7,Math.max(1,Math.round(value('days'))));
+    let night=0;
+    for(let t=start;t<end;t++){const m=t%1440;if(m>=1320||m<360)night++;}
+    night=Math.min(night,work);
+    const weekly=work*days,overtime=Math.max(Math.max(0,work-480)*days,weekly-2400,0);
+    const hm=m=>`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:''}`;
+    const rows=[['휴게시간',rest+'분'],['주 근로시간',hm(weekly)],['월 환산 근로시간',number(weekly/60*365/7/12,1)+'시간'],['연장근로 (주)',hm(overtime)],['야간근로 (주, 22~06시)',hm(night*days)],['주 52시간 기준',weekly>3120?`${hm(weekly-3120)} 초과`:'이내']];
+    const hourly=positive('hourly');
+    if(hourly>0){
+      const regular=Math.min(weekly,2400)/60,holidayHours=weekly>=900?Math.min(8,regular/40*8):0;
+      const pay=hourly*weekly/60+hourly*.5*overtime/60+hourly*.5*night*days/60+hourly*holidayHours;
+      rows.push(['주급 예상 (가산·주휴 포함)',won(pay)],['월급 환산',won(pay*365/7/12)]);
+    }
+    render(hm(work)+' / 일',rows);
+  },
+  'car-installment':()=>{
+    if(!requirePositive(['price']))return;
+    const price=positive('price'),down=Math.min(positive('down'),price),n=Number(selected('months')),r=positive('rate')/1200;
+    const principal=price-down;
+    if(principal<=0){render('할부가 필요 없어요',[['차량 가격',won(price)],['선수금',won(down)],['할부원금','0원']]);return;}
+    const balloon=Math.min(principal,price*Math.min(80,positive('residual'))/100);
+    const payment=r?(principal-balloon/Math.pow(1+r,n))*r/(1-Math.pow(1+r,-n)):(principal-balloon)/n;
+    const total=payment*n+balloon;
+    render(won(payment)+' / 월',[['할부원금',won(principal)],['할부 기간',n+'개월'],['마지막 달 유예금',balloon?won(balloon):'없음'],['총 이자',won(total-principal)],['할부 총 납부액',won(total)],['선수금 포함 총비용',won(total+down)]]);
+  },
+  'jongbu-tax':()=>{
+    if(!requirePositive(['price']))return;
+    const price=positive('price'),type=selected('houses'),one=type==='one';
+    const progressive=(base,bands)=>{let tax=0,prev=0;for(const [limit,rate] of bands){if(base<=prev)break;tax+=(Math.min(base,limit)-prev)*rate;prev=limit;}return tax;};
+    const general=[[3e8,.005],[6e8,.007],[12e8,.01],[25e8,.013],[50e8,.015],[94e8,.02],[Infinity,.027]];
+    const heavy=[[3e8,.005],[6e8,.007],[12e8,.01],[25e8,.02],[50e8,.03],[94e8,.04],[Infinity,.05]];
+    // 재산세 표준세율 (재산세 중복분 공제 계산용)
+    const propertyStandard=b=>b<=6e7?b*.001:b<=1.5e8?6e4+(b-6e7)*.0015:b<=3e8?19.5e4+(b-1.5e8)*.0025:57e4+(b-3e8)*.004;
+    const deduction=one?12e8:9e8,base=Math.max(0,price-deduction)*.6;
+    if(base<=0){render('종합부동산세 대상이 아니에요',[['공시가격 합계',won(price)],['기본공제',won(deduction)],['과세표준','0원']]);return;}
+    const gross=progressive(base,type==='three'?heavy:general);
+    const propertyTax=propertyStandard(price*(one?.45:.6));
+    const overlap=propertyTax*Math.min(1,propertyStandard(base*.6)/propertyStandard(price*.6));
+    const afterOverlap=Math.max(0,gross-overlap);
+    const age=positive('age'),years=positive('years');
+    const credit=one?Math.min(.8,(age>=70?.4:age>=65?.3:age>=60?.2:0)+(years>=15?.5:years>=10?.4:years>=5?.2:0)):0;
+    const jongbu=afterOverlap*(1-credit),rural=jongbu*.2;
+    render(won(jongbu+rural),[
+      ['기본공제',won(deduction)],
+      ['과세표준 (공제 후 × 60%)',won(base)],
+      ['산출세액',won(gross)],
+      ['재산세 중복분 공제','-'+won(overlap)],
+      ['1세대 1주택 세액공제',one?`${number(credit*100)}% (-${won(afterOverlap*credit)})`:'해당 없음'],
+      ['종합부동산세',won(jongbu)],
+      ['농어촌특별세 (20%)',won(rural)]
+    ]);
+  },
+  'dividend':()=>{
+    if(!requirePositive(['shares','dps']))return;
+    const shares=positive('shares'),dps=positive('dps'),freq=Number(selected('freq')),rate=Number(selected('tax'))/100,price=positive('price'),target=positive('target');
+    const gross=shares*dps,net=gross*(1-rate);
+    const rows=[['세전 연 배당금',won(gross)],['배당소득세',won(gross*rate)],['세후 연 배당금',won(net)],[`1회 지급액 (연 ${freq}회, 세후)`,won(net/freq)]];
+    if(price>0)rows.push(['배당수익률 (세전)',number(dps/price*100,2)+'%'],['투자 원금',won(shares*price)]);
+    if(target>0){
+      const need=Math.ceil(target*12/(dps*(1-rate)));
+      rows.push(['목표 월배당에 필요한 주식 수',number(need)+'주']);
+      if(price>0)rows.push(['목표 달성에 필요한 투자금',won(need*price)]);
+    }
+    render(won(net/12)+' / 월',rows);
+  },
+  'lunar-converter':()=>{
+    let fmt;
+    try{
+      fmt=new Intl.DateTimeFormat('ko-KR-u-ca-chinese',{year:'numeric',month:'numeric',day:'numeric',timeZone:'Asia/Seoul'});
+      if(fmt.resolvedOptions().calendar!=='chinese')throw new Error('unsupported');
+    }catch(e){alert('이 브라우저는 음력 계산을 지원하지 않아요. 최신 크롬·사파리·엣지에서 이용해 주세요.');return;}
+    const lunarOf=d=>{
+      const p=Object.fromEntries(fmt.formatToParts(d).map(x=>[x.type,x.value]));
+      return {y:Number(p.relatedYear||p.year),m:parseInt(String(p.month).replace(/\D/g,''),10),leap:/윤|bis/.test(p.month),d:Number(p.day)};
+    };
+    const noon=(y,m,d)=>new Date(y,m,d,12);
+    const idx=y=>((y-4)%12+12)%12;
+    const ganji=y=>'갑을병정무기경신임계'[((y-4)%10+10)%10]+'자축인묘진사오미신유술해'[idx(y)];
+    const animal=y=>['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'][idx(y)];
+    const solarText=d=>`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;
+    const findSolar=(y,m,d,leap)=>{
+      for(let i=0;i<420;i++){const day=noon(y,0,1+i),l=lunarOf(day);if(l.y===y&&l.m===m&&l.d===d&&l.leap===leap)return day;}
+      return null;
+    };
+    const nextYear=(y,m,d)=>findSolar(y+1,m,d,false)||findSolar(y+1,m,Math.min(d,29),false);
+    if(selected('dir')==='toLunar'){
+      const s=parseDate('solar');
+      if(!s){alert('양력 날짜를 입력해 주세요.');return;}
+      const day=noon(s.getFullYear(),s.getMonth(),s.getDate()),l=lunarOf(day),next=nextYear(l.y,l.m,l.d);
+      render(`음력 ${l.y}년 ${l.leap?'윤':''}${l.m}월 ${l.d}일`,[['양력',solarText(day)],['윤달 여부',l.leap?'윤달':'평달'],['간지·띠',`${ganji(l.y)}년 · ${animal(l.y)}띠`],['다음 해 같은 음력 날짜',next?solarText(next):'해당 날짜 없음']]);
+      return;
+    }
+    const y=Math.round(value('ly')),m=Math.round(value('lm')),d=Math.round(value('ld')),leap=selected('leap')==='yes';
+    if(y<1901||y>2099||m<1||m>12||d<1||d>30){alert('음력 날짜를 올바르게 입력해 주세요. (1901~2099년)');return;}
+    const solar=findSolar(y,m,d,leap);
+    if(!solar){alert(leap?`${y}년에는 윤${m}월 ${d}일이 없어요.`:`${y}년 음력 ${m}월에는 ${d}일이 없어요.`);return;}
+    const next=nextYear(y,m,d);
+    render(solarText(solar),[['음력',`${y}년 ${leap?'윤':''}${m}월 ${d}일`],['간지·띠',`${ganji(y)}년 · ${animal(y)}띠`],['다음 해 같은 음력 날짜',next?solarText(next):'해당 날짜 없음']]);
+  },
+
   'date-calc':()=>{
     const base=parseDate('base');
     if(!base){alert('기준일을 입력해 주세요.');return;}
@@ -398,6 +529,15 @@ const UNITS={
 document.addEventListener('DOMContentLoaded',()=>{
   const now=new Date(),iso=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
   document.querySelectorAll('input[type=date]').forEach(input=>{if(!input.value)input.value=iso;});
+  if(document.body.dataset.calc==='lunar-converter'){
+    const toggle=()=>{
+      const toSolar=selected('dir')==='toSolar';
+      $('solar').closest('.field').hidden=toSolar;
+      ['ly','lm','ld','leap'].forEach(id=>{$(id).closest('.field').hidden=!toSolar;});
+    };
+    $('dir').addEventListener('change',toggle);
+    toggle();
+  }
   if(document.body.dataset.calc==='unit-converter'){
     const defaults={length:['m','ft'],weight:['kg','lb'],area:['m2','pyeong'],volume:['l','gal'],temperature:['C','F']};
     const fill=()=>{
