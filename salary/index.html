@@ -106,6 +106,7 @@ body{transition:background .3s,color .3s;}
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header>
@@ -264,51 +265,27 @@ function calc(){
   const monthly=Math.floor(annual/12);
   const taxMonthly=Math.max(0,monthly-nontax);
   // 국민연금 기준소득월액: 2026.7~2027.6 하한 41만원, 상한 659만원
-  const f10=n=>Math.floor(Math.round(n*1000)/1000/10)*10; // 10원 미만 절사 (부동소수점 오차 보정)
-  const pensionBase=Math.min(Math.max(Math.floor(taxMonthly/1000)*1000,410000),6590000);
-  const national=f10(pensionBase*0.0475);
-  const health=f10(taxMonthly*0.03595);
-  const longterm=f10(health*0.1314);
-  const employ=f10(taxMonthly*0.009);
+  const R=window.KR_RATES,ins=R.insurance(taxMonthly);
+  const national=ins.pension,health=ins.health,longterm=ins.ltc,employ=ins.employ;
   // 소득세: 국세청 근로소득 간이세액표 (비과세 제외 월급여 · 공제대상가족 수)
-  const incomeTax=lookupWithholding(taxMonthly,family);
-  const localTax=Math.floor(incomeTax*0.1/10)*10;
+  const incomeTax=R.withholding(taxMonthly,family).income;
+  const localTax=R.floor10(incomeTax*R.localIncomeTaxRatio);
   const totalDeduct=national+health+longterm+employ+incomeTax+localTax;
   const takehome=monthly-totalDeduct;
   document.getElementById('take').textContent=comma(takehome)+'원 / 월';
   document.getElementById('detail').innerHTML=`
     <div class="result-row"><span>월 세전 급여</span><strong>${won(monthly)}</strong></div>
-    <div class="result-row"><span>국민연금 (4.75%)</span><strong style="color:#dc2626">-${won(national)}</strong></div>
-    <div class="result-row"><span>건강보험 (3.595%)</span><strong style="color:#dc2626">-${won(health)}</strong></div>
-    <div class="result-row"><span>장기요양 (0.9448%)</span><strong style="color:#dc2626">-${won(longterm)}</strong></div>
-    <div class="result-row"><span>고용보험 (0.9%)</span><strong style="color:#dc2626">-${won(employ)}</strong></div>
+    <div class="result-row"><span>국민연금 (${+(R.pension.rate*100).toFixed(3)}%)</span><strong style="color:#dc2626">-${won(national)}</strong></div>
+    <div class="result-row"><span>건강보험 (${+(R.health.rate*100).toFixed(3)}%)</span><strong style="color:#dc2626">-${won(health)}</strong></div>
+    <div class="result-row"><span>장기요양 (건강보험료의 ${+(R.health.ltcRatio*100).toFixed(2)}%)</span><strong style="color:#dc2626">-${won(longterm)}</strong></div>
+    <div class="result-row"><span>고용보험 (${+(R.employment.worker*100).toFixed(2)}%)</span><strong style="color:#dc2626">-${won(employ)}</strong></div>
     <div class="result-row"><span>소득세 (간이세액표)</span><strong style="color:#dc2626">-${won(incomeTax)}</strong></div>
     <div class="result-row"><span>지방소득세</span><strong style="color:#dc2626">-${won(localTax)}</strong></div>
     <div class="result-row"><span>총 공제액</span><strong style="color:#dc2626">-${won(totalDeduct)}</strong></div>
     <div class="result-row"><span>연간 실수령액</span><strong>${won(takehome*12)}</strong></div>
-    <div style="font-size:11px;color:#888;margin-top:8px">※ 2026년 4대보험 요율, 국민연금 기준소득월액 상한 659만원, 국세청 근로소득 간이세액표 기준이에요. 8~20세 자녀 세액 차감은 <a href="../withholding-tax/" style="color:inherit">월급 원천징수 세액 계산기</a>에서 확인하세요.</div>
+    <div style="font-size:11px;color:#888;margin-top:8px">※ 2026년 4대보험 요율, 국민연금 기준소득월액 상한 ${R.pension.max/10000}만원, 국세청 근로소득 간이세액표 기준이에요. 8~20세 자녀 세액 차감은 <a href="../withholding-tax/" style="color:inherit">월급 원천징수 세액 계산기</a>에서 확인하세요.</div>
   `;
   document.getElementById('result').classList.add('show');
-}
-function lookupWithholding(monthly,family){
-  const table=window.WITHHOLDING_TABLE;
-  const fam=Math.min(Math.max(family,1),11);
-  const k=monthly/1000;
-  let tax=0;
-  if(k>=770&&k<10000){
-    const row=table.rows.find(r=>k>=r[0]&&k<r[1]);
-    tax=row?row[1+fam]:0;
-  }else if(k>=10000){
-    const base=table.top[fam-1];
-    if(monthly<=10000000)tax=base;
-    else if(monthly<=14000000)tax=base+(monthly-10000000)*0.98*0.35+25000;
-    else if(monthly<=28000000)tax=base+1397000+(monthly-14000000)*0.98*0.38;
-    else if(monthly<=30000000)tax=base+6610600+(monthly-28000000)*0.98*0.40;
-    else if(monthly<=45000000)tax=base+7394600+(monthly-30000000)*0.40;
-    else if(monthly<=87000000)tax=base+13394600+(monthly-45000000)*0.42;
-    else tax=base+31034600+(monthly-87000000)*0.45;
-  }
-  return Math.floor(tax/10)*10;
 }
 </script>
 <script src="../assets/withholding-table.js"></script>

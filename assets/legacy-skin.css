@@ -1,5 +1,6 @@
-/* 기존 수작업 페이지를 새 디자인(홈·공통 템플릿)과 맞추는 공통 스킨. 페이지 내부 스타일보다 뒤에 불러와 덮어쓴다. */
-:root{--bg:#f5f6f8;--surface:#fff;--surface2:#f0f2f5;--border:#e4e7ec;--text:#15181d;--muted:#687080;--body:#3d434d;--accent:#1f4fd1;--accent-light:#e8eefc;--green:#1f4fd1;--green-light:#e8eefc;--purple:#1f4fd1;--purple-light:#e8eefc;--teal:#1f4fd1;--teal-light:#e8eefc;--orange:#1f4fd1;--orange-light:#e8eefc;--pink:#1f4fd1;--pink-light:#e8eefc;--indigo:#1f4fd1;--indigo-light:#e8eefc;--blue:#1f4fd1;--blue-light:#e8eefc;--yellow-light:#fff7e0;--red:#d92d20}
+/* 기존 수작업 페이지를 새 디자인(홈·공통 템플릿)과 맞추는 공통 스킨. 페이지 내부 스타일보다 뒤에 불러와 덮어쓴다.
+   명암 대비는 tools/audit-ui.mjs로 밝은·어두운 테마 × 데스크톱·모바일 전체를 측정해 맞춘다. */
+:root{--bg:#f5f6f8;--surface:#fff;--surface2:#f0f2f5;--border:#e4e7ec;--text:#15181d;--muted:#5c6370;--body:#3d434d;--accent:#1f4fd1;--accent-light:#e8eefc;--green:#1f4fd1;--green-light:#e8eefc;--purple:#1f4fd1;--purple-light:#e8eefc;--teal:#1f4fd1;--teal-light:#e8eefc;--orange:#1f4fd1;--orange-light:#e8eefc;--pink:#1f4fd1;--pink-light:#e8eefc;--indigo:#1f4fd1;--indigo-light:#e8eefc;--blue:#1f4fd1;--blue-light:#e8eefc;--yellow-light:#fff7e0;--red:#b42318}
 [data-theme="dark"]{--bg:#0e1014;--surface:#161920;--surface2:#1d2129;--border:#282d36;--text:#eceef2;--muted:#a3a9b4;--body:#c7ccd4;--accent:#7ea3ff;--accent-light:rgba(126,163,255,.13);--green:#7ea3ff;--green-light:rgba(126,163,255,.13);--purple:#7ea3ff;--purple-light:rgba(126,163,255,.13);--teal:#7ea3ff;--teal-light:rgba(126,163,255,.13);--orange:#7ea3ff;--orange-light:rgba(126,163,255,.13);--pink:#7ea3ff;--pink-light:rgba(126,163,255,.13);--indigo:#7ea3ff;--indigo-light:rgba(126,163,255,.13);--blue:#7ea3ff;--blue-light:rgba(126,163,255,.13);--yellow-light:rgba(217,160,6,.14);--red:#f97066}
 
 body{background:var(--bg);color:var(--text);font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;-webkit-font-smoothing:antialiased}
@@ -36,10 +37,14 @@ header .logo span{font-weight:800}
 .result-label{font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--accent)}
 .result-main{font-size:32px;font-weight:800;letter-spacing:-.02em;color:var(--accent)}
 .result-row{padding:8px 0;font-size:14px;border-bottom:1px solid color-mix(in srgb,var(--text) 8%,transparent)}
-.remain-box,.milestone-box,.stat-box,.info-box,.compare-box,.month-box,.dday-box{background:var(--surface)!important;border:1px solid var(--border);border-radius:12px}
+.remain-box,.milestone-box,.stat-box,.compare-box,.month-box{background:var(--surface)!important;border:1px solid var(--border);border-radius:12px}
 .warn-box,.notice-box,.note-box,.highlight-box,.medical-notice,.rate-badge{border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--body)}
 .rate-table th,.deduct-table th,.tax-table th,.income-table th,.bmi-table th,.cpm-table th{background:var(--accent-light)!important;color:var(--text)}
 .rate-table td,.deduct-table td,.tax-table td,.income-table td,.bmi-table td,.cpm-table td{border-bottom:1px solid var(--border)}
+
+/* 월급날 계산기의 D-Day 카드는 원래 어두운 카드 위에 흰 글자로 설계돼 있어 그대로 둔다 */
+.dday-box{background:linear-gradient(135deg,#1a1a18,#2d2d2b)!important;color:#fff!important;border:0!important}
+.dday-box .info-box{background:rgba(255,255,255,.1)!important;border:0!important;color:#fff}
 
 .desc-section{padding:26px 28px;border-top:1px solid var(--border);background:var(--surface2)}
 .desc-section h2{margin-bottom:10px;font-size:18px;font-weight:750;letter-spacing:-.02em}
@@ -59,31 +64,58 @@ header .logo span{font-weight:800}
 .hero,.article-card,.section,.contact-card,.links,.note,.guide-card{border:1px solid var(--border)!important;border-radius:16px!important;background:var(--surface)}
 .hero h1,.page-title{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.35}
 .hero p,.page-sub{font-size:15px;line-height:1.8;color:var(--body)}
-.hero-meta span,.meta,.date{color:var(--muted)}
+.hero-meta span,.meta{color:var(--muted)}
+.date{background:var(--accent-light)!important;color:var(--accent)!important}
 .article-section h2,.section h2,.links h2,.contact-card-header h2{font-size:19px;font-weight:750;letter-spacing:-.02em}
-.article-section p,.article-section li,.section p,.section li{font-size:15px;line-height:1.9;color:var(--body)}
+.article-section p,.article-section li,.section p,.section li,.section ul li{font-size:15px;line-height:1.9;color:var(--body)}
 .link-card,.link-grid a{border:1px solid var(--border)!important;border-radius:11px!important;background:var(--surface);color:var(--text)}
 .link-card:hover,.link-grid a:hover,.guide-card:hover{border-color:var(--accent)!important}
 .guide-card strong{letter-spacing:-.02em}
+
+/* 로또 번호 공: 흰 글자가 읽히도록 공 색을 조정하고, 밝은 공은 어두운 글자를 쓴다 */
+.balls .ball.b1,.balls .ball.b5{color:#1f2937!important}
+.balls .ball.b2{background:#1d63d6!important}
+.balls .ball.b3{background:#c92a2a!important}
+.balls .ball.b4{background:#5f6673!important}
+.bonus-label{color:var(--accent)!important}
+.game-btn.on{background:#b45309!important;border-color:#b45309!important}
 
 footer{padding:28px 20px 36px;border-top:1px solid var(--border);background:var(--surface)!important;color:var(--muted)!important;font-size:13px;line-height:1.8}
 footer strong{color:var(--text)!important}
 footer a{color:var(--muted)!important}
 
 /* 일부 계산기(연말정산·BMI·종합소득세·프리랜서·전세 vs 월세)는 결과 박스 배경을 스크립트로 밝은 색으로 지정한다.
-   어두운 테마에서는 글자가 안 보이므로 배경만 테마 색으로 되돌리고, 테두리 색(환급·납부 구분)은 유지한다. */
+   어두운 테마에서는 배경만 테마 색으로 되돌리고, 테두리 색(환급·납부 구분)은 유지한다. */
 [data-theme="dark"] .result-box,[data-theme="dark"] .result-area,[data-theme="dark"] .compare-result,[data-theme="dark"] .zero-box{background:var(--accent-light)!important}
 [data-theme="dark"] .result-row span{color:var(--muted)}
 [data-theme="dark"] .result-row strong{color:var(--text)}
 
-/* 결과 HTML에 직접 박힌 어두운 글자색·진한 강조색을 어두운 테마에서 읽히는 색으로 바꾼다. */
+/* 결과 HTML과 스크립트가 직접 넣은 글자색을 테마별로 읽히는 색으로 바꾼다.
+   HTML에 쓴 hex(color:#dc2626)와 스크립트가 넣은 rgb(color: rgb(220, 38, 38)) 두 형태를 모두 잡는다. */
+[style*="color:#888"],[style*="color: rgb(136, 136, 136)"]{color:var(--muted)!important}
 [data-theme="dark"] [style*="color:#555"],[data-theme="dark"] [style*="color:#444"],[data-theme="dark"] [style*="color:#666"],[data-theme="dark"] [style*="color:#1a1a18"],[data-theme="dark"] [style*="color:#888880"]{color:var(--body)!important}
-[data-theme="dark"] [style*="color:#4338ca"],[data-theme="dark"] [style*="color:#1241cc"],[data-theme="dark"] [style*="color:#1d4ed8"],[data-theme="dark"] [style*="color:#2563eb"]{color:var(--accent)!important}
-[data-theme="dark"] [style*="color:#007c8a"],[data-theme="dark"] [style*="color:#0f766e"],[data-theme="dark"] [style*="color:#0d9488"]{color:#5fd4c4!important}
+[data-theme="dark"] [style*="color:#4338ca"],[data-theme="dark"] [style*="color:#1241cc"],[data-theme="dark"] [style*="color:#1d4ed8"],[data-theme="dark"] [style*="color:#2563eb"],[data-theme="dark"] [style*="color: rgb(37, 99, 235)"]{color:var(--accent)!important}
+[data-theme="dark"] [style*="color:#dc2626"],[data-theme="dark"] [style*="color: rgb(220, 38, 38)"],[data-theme="dark"] [style*="color:#ef4444"],[data-theme="dark"] [style*="color: rgb(239, 68, 68)"],[data-theme="dark"] [style*="color:#b91c1c"],[data-theme="dark"] [style*="color: rgb(185, 28, 28)"]{color:#ff9b93!important}
+[data-theme="dark"] [style*="color:#16a34a"],[data-theme="dark"] [style*="color: rgb(22, 163, 74)"]{color:#4ade80!important}
+[data-theme="dark"] [style*="color:#007c8a"],[data-theme="dark"] [style*="color:#0f766e"],[data-theme="dark"] [style*="color:#0d9488"],[data-theme="dark"] [style*="color: rgb(13, 148, 136)"]{color:#5fd4c4!important}
 [data-theme="dark"] [style*="color:#7c3aed"]{color:#c4b5fd!important}
-[data-theme="dark"] [style*="color:#be185d"],[data-theme="dark"] [style*="color:#db2777"]{color:#f9a8d4!important}
-[data-theme="dark"] [style*="color:#856404"],[data-theme="dark"] [style*="color:#9a3412"]{color:#fdba74!important}
+[data-theme="dark"] [style*="color:#be185d"],[data-theme="dark"] [style*="color:#db2777"],[data-theme="dark"] [style*="color: rgb(219, 39, 119)"]{color:#f9a8d4!important}
+[data-theme="dark"] [style*="color:#856404"],[data-theme="dark"] [style*="color:#9a3412"],[data-theme="dark"] [style*="color:#ea580c"],[data-theme="dark"] [style*="color: rgb(234, 88, 12)"]{color:#fdba74!important}
 [data-theme="dark"] [style*="background:rgba(255,255,255,.6)"]{background:var(--surface2)!important}
+[data-theme="dark"] [style*="color:#166534"],[data-theme="dark"] [style*="color: rgb(22, 101, 52)"],[data-theme="dark"] [style*="color:#028a3e"],[data-theme="dark"] [style*="color: rgb(2, 138, 62)"]{color:#4ade80!important}
+[data-theme="dark"] [style*="color:#92400e"],[data-theme="dark"] [style*="color: rgb(146, 64, 14)"],[data-theme="dark"] [style*="color:#b45309"],[data-theme="dark"] [style*="color: rgb(180, 83, 9)"]{color:#fdba74!important}
+[data-theme="dark"] [style*="color:#991b1b"],[data-theme="dark"] [style*="color: rgb(153, 27, 27)"]{color:#ff9b93!important}
+html:not([data-theme="dark"]) [style*="color:#16a34a"],html:not([data-theme="dark"]) [style*="color: rgb(22, 163, 74)"],html:not([data-theme="dark"]) [style*="color: rgb(16, 185, 129)"],html:not([data-theme="dark"]) [style*="color:#028a3e"],html:not([data-theme="dark"]) [style*="color: rgb(2, 138, 62)"]{color:#166534!important}
+html:not([data-theme="dark"]) [style*="color:#0d9488"],html:not([data-theme="dark"]) [style*="color: rgb(13, 148, 136)"],html:not([data-theme="dark"]) [style*="color:#007c8a"],html:not([data-theme="dark"]) [style*="color: rgb(0, 124, 138)"]{color:#0f6660!important}
+html:not([data-theme="dark"]) [style*="color:#ea580c"],html:not([data-theme="dark"]) [style*="color: rgb(234, 88, 12)"],html:not([data-theme="dark"]) [style*="color:#f59e0b"],html:not([data-theme="dark"]) [style*="color: rgb(245, 158, 11)"],html:not([data-theme="dark"]) [style*="color:#b45309"],html:not([data-theme="dark"]) [style*="color: rgb(180, 83, 9)"]{color:#92400e!important}
+html:not([data-theme="dark"]) [style*="color:#db2777"],html:not([data-theme="dark"]) [style*="color: rgb(219, 39, 119)"]{color:#be185d!important}
+html:not([data-theme="dark"]) [style*="color:#ef4444"],html:not([data-theme="dark"]) [style*="color: rgb(239, 68, 68)"],html:not([data-theme="dark"]) [style*="color: rgb(248, 113, 113)"],html:not([data-theme="dark"]) [style*="color:#dc2626"],html:not([data-theme="dark"]) [style*="color: rgb(220, 38, 38)"]{color:#b91c1c!important}
+html:not([data-theme="dark"]) [style*="color: rgb(96, 165, 250)"],html:not([data-theme="dark"]) [style*="color:#2563eb"],html:not([data-theme="dark"]) [style*="color: rgb(37, 99, 235)"]{color:#1d4ed8!important}
+
+/* 페이지 CSS에 직접 지정된 색: 증여세 비과세 안내, 스마트스토어 실수령액, 개인정보처리방침 링크 */
+.zero-box p{color:#166534!important}
+[data-theme="dark"] .zero-box p{color:#4ade80!important}
+.section a,.article-section a{color:var(--accent)!important}
 
 /* 가이드 본문 첫 소제목 위 여백 중복 제거 */
 .article-card>.article-section:first-child,.article-card>:first-child{margin-top:0}

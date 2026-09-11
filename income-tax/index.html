@@ -95,6 +95,7 @@ body{transition:background .3s,color .3s;}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -191,16 +192,7 @@ body{transition:background .3s,color .3s;}
 <script>
 function comma(n){return Math.round(n).toLocaleString('ko-KR');}
 function won(n){return comma(n)+'원';}
-function calcTax(b){
-  if(b<=14000000)return b*0.06;
-  if(b<=50000000)return b*0.15-1260000;
-  if(b<=88000000)return b*0.24-5760000;
-  if(b<=150000000)return b*0.35-15440000;
-  if(b<=300000000)return b*0.38-19940000;
-  if(b<=500000000)return b*0.40-25940000;
-  if(b<=1000000000)return b*0.42-35940000;
-  return b*0.45-65940000;
-}
+function calcTax(b){return window.KR_RATES.incomeTax(b);}
 function calc(){
   const wage=+document.getElementById('wage').value||0;
   const business=+document.getElementById('business').value||0;
@@ -211,13 +203,7 @@ function calc(){
   const healthPaid=+document.getElementById('health-paid').value||0;
   const prepaid=+document.getElementById('prepaid').value||0;
   // 근로소득공제
-  function wageDeduct(y){
-    if(y<=5000000)return y*0.70;
-    if(y<=15000000)return 3500000+(y-5000000)*0.40;
-    if(y<=45000000)return 7500000+(y-15000000)*0.15;
-    if(y<=100000000)return 12000000+(y-45000000)*0.05;
-    return Math.min(20000000,14750000+(y-100000000)*0.02);
-  }
+  const wageDeduct=y=>window.KR_RATES.earnedIncomeDeduction(y);
   const wageIncome=Math.max(0,wage-wageDeduct(wage));
   // 사업소득 (단순경비율 64.1%)
   const bizIncome=Math.max(0,business*(1-0.641));
@@ -234,11 +220,10 @@ function calc(){
   // 근로소득세액공제
   let earnCredit=0;
   if(wage>0){
-    const creditLimit=wage<=33000000?740000:wage<=70000000?Math.max(660000,740000-(wage-33000000)*0.008):wage<=120000000?Math.max(500000,660000-(wage-70000000)*0.5):Math.max(200000,500000-(wage-120000000)*0.5);
-    earnCredit=Math.min(incomeTax<=1300000?incomeTax*0.55:715000+(incomeTax-1300000)*0.3,creditLimit);
+    earnCredit=window.KR_RATES.earnedIncomeCredit(incomeTax,wage);
   }
   const finalTax=Math.max(0,incomeTax-earnCredit);
-  const localTax=Math.floor(finalTax*0.1);
+  const localTax=Math.floor(finalTax*window.KR_RATES.localIncomeTaxRatio);
   const totalTax=finalTax+localTax;
   // 기납부세액은 국세 원천징수액으로 입력받으므로 국세 결정세액과 비교
   const diff=finalTax-prepaid;

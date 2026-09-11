@@ -40,6 +40,7 @@ body{transition:background .3s,color .3s;}
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -106,7 +107,7 @@ body{transition:background .3s,color .3s;}
 <script>
 function comma(n){return Math.round(n).toLocaleString('ko-KR');}
 function won(n){return comma(n)+'원';}
-function calcTax(b){if(b<=14000000)return b*.06;if(b<=50000000)return b*.15-1260000;if(b<=88000000)return b*.24-5760000;if(b<=150000000)return b*.35-15440000;if(b<=300000000)return b*.38-19940000;if(b<=500000000)return b*.40-25940000;if(b<=1000000000)return b*.42-35940000;return b*.45-65940000;}
+function calcTax(b){return window.KR_RATES.incomeTax(b);}
 function calc(){
   const buy=+document.getElementById('buy').value*10000;
   const sell=+document.getElementById('sell').value*10000;

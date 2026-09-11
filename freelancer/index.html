@@ -94,6 +94,7 @@ body{transition:background .3s,color .3s;}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -226,7 +227,7 @@ function calcAnnual(){
   const income=+document.getElementById('annual-income').value;
   const expType=document.getElementById('expense-type').value;
   const family=+document.getElementById('family').value;
-  const paid33=+document.getElementById('paid33').value||income*0.033;
+  const paid33=+document.getElementById('paid33').value||income*window.KR_RATES.businessIncomeWithholding;
   if(!income){alert('연간 수입을 입력해주세요.');return;}
   // 경비 계산
   let expense;
@@ -238,16 +239,9 @@ function calcAnnual(){
   const basicDeduct=family*1500000;
   const taxBase=Math.max(0,businessIncome-basicDeduct);
   // 종합소득세 계산
-  function calcTax(b){
-    if(b<=14000000)return b*0.06;
-    if(b<=50000000)return 840000+(b-14000000)*0.15;
-    if(b<=88000000)return 6240000+(b-50000000)*0.24;
-    if(b<=150000000)return 15360000+(b-88000000)*0.35;
-    if(b<=300000000)return 37060000+(b-150000000)*0.38;
-    return 94060000+(b-300000000)*0.40;
-  }
+  const calcTax=b=>window.KR_RATES.incomeTax(b);
   const incomeTax=calcTax(taxBase);
-  const localTax=incomeTax*0.1;
+  const localTax=incomeTax*window.KR_RATES.localIncomeTaxRatio;
   const totalTax=incomeTax+localTax;
   const diff=paid33-totalTax;
   const isRefund=diff>=0;

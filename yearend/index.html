@@ -96,6 +96,7 @@ body{transition:background .3s,color .3s;}
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
@@ -231,23 +232,10 @@ body{transition:background .3s,color .3s;}
 <script>
 function comma(n){return Math.round(n).toLocaleString('ko-KR');}
 function won(n){return comma(n)+'원';}
-function calcTax(b){
-  if(b<=14000000)return b*0.06;
-  if(b<=50000000)return 840000+(b-14000000)*0.15;
-  if(b<=88000000)return 6240000+(b-50000000)*0.24;
-  if(b<=150000000)return 15360000+(b-88000000)*0.35;
-  if(b<=300000000)return 37060000+(b-150000000)*0.38;
-  if(b<=500000000)return 94060000+(b-300000000)*0.40;
-  if(b<=1000000000)return 174060000+(b-500000000)*0.42;
-  return 384060000+(b-1000000000)*0.45;
-}
+function calcTax(b){return window.KR_RATES.incomeTax(b);}
 function estimateInsurance(salary){
-  // 2026년 근로자 부담 4대보험 (국민연금 기준소득월액 41만~659만원)
-  const f10=n=>Math.floor(Math.round(n*1000)/1000/10)*10;
-  const m=salary/12;
-  const pensionBase=Math.min(Math.max(Math.floor(m/1000)*1000,410000),6590000);
-  const health=f10(m*0.03595);
-  return (f10(pensionBase*0.0475)+health+f10(health*0.1314)+f10(m*0.009))*12;
+  // 2026년 근로자 부담 4대보험 (국민연금 기준소득월액 상·하한 포함)
+  return window.KR_RATES.insurance(salary/12).total*12;
 }
 function calc(){
   const salary=+document.getElementById('salary').value;
@@ -266,12 +254,7 @@ function calc(){
   if(!salary){alert('총 급여를 입력해주세요.');return;}
 
   // 근로소득공제 (1억 초과분 2%, 한도 2천만원)
-  let earnDeduct;
-  if(salary<=5000000)earnDeduct=salary*0.7;
-  else if(salary<=15000000)earnDeduct=3500000+(salary-5000000)*0.4;
-  else if(salary<=45000000)earnDeduct=7500000+(salary-15000000)*0.15;
-  else if(salary<=100000000)earnDeduct=12000000+(salary-45000000)*0.05;
-  else earnDeduct=Math.min(20000000,14750000+(salary-100000000)*0.02);
+  const earnDeduct=window.KR_RATES.earnedIncomeDeduction(salary);
 
   // 소득공제
   const basicDeduct=family*1500000;
@@ -296,23 +279,24 @@ function calc(){
   let incomeTax=calcTax(taxBase);
 
   // 세액공제: 근로소득 세액공제
-  const creditLimit=salary<=33000000?740000:salary<=70000000?Math.max(660000,740000-(salary-33000000)*0.008):salary<=120000000?Math.max(500000,660000-(salary-70000000)*0.5):Math.max(200000,500000-(salary-120000000)*0.5);
-  const earnCredit=Math.min(incomeTax<=1300000?incomeTax*0.55:715000+(incomeTax-1300000)*0.30,creditLimit);
+  const earnCredit=window.KR_RATES.earnedIncomeCredit(incomeTax,salary);
   incomeTax=Math.max(0,incomeTax-earnCredit);
 
   // 세액공제: 자녀(8세 이상), 의료비(15%), 교육비(15%), 기부금(15%), 월세(17%/15%)
-  const childCredit=kids<=0?0:kids===1?250000:kids===2?550000:550000+(kids-2)*400000;
+  const childCredit=window.KR_RATES.credits.child(kids);
   const medicalCredit=Math.max(0,medical-salary*0.03)*0.15;
   const eduCredit=Math.min(edu,3000000)*0.15;
   const donateCredit=Math.min(donate,salary*0.3)*0.15;
-  const rentCredit=salary<=55000000?Math.min(rent,10000000)*0.17:salary<=80000000?Math.min(rent,10000000)*0.15:0;
+  const RC=window.KR_RATES.credits.rent;
+  const rentCredit=salary<=RC.lowSalary?Math.min(rent,RC.cap)*RC.lowRate:salary<=RC.maxSalary?Math.min(rent,RC.cap)*RC.highRate:0;
   // 연금저축 세액공제
   // 국세 기준 15%/12%. 지방소득세는 아래에서 별도 계산.
-  const pensionCredit=Math.min(pension,6000000)*(salary<=55000000?0.15:0.12);
+  const PC=window.KR_RATES.credits.pensionAccount;
+  const pensionCredit=Math.min(pension,PC.savingCap)*(salary<=PC.lowSalary?PC.lowRate:PC.highRate);
 
   const totalCredit=earnCredit+childCredit+medicalCredit+eduCredit+donateCredit+rentCredit+pensionCredit;
   const finalTax=Math.max(0,calcTax(taxBase)-totalCredit);
-  const localTax=finalTax*0.1;
+  const localTax=finalTax*window.KR_RATES.localIncomeTaxRatio;
   const totalFinalTax=finalTax+localTax;
   const diff=paid-totalFinalTax;
   const isRefund=diff>=0;

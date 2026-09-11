@@ -1,49 +1,11 @@
 // 2026년 9월 추가·이전된 계산기. utility-calculators.js의 $, value, positive, won, number, render를 함께 사용한다.
-const PAY2026={
-  pensionRate:.0475,pensionMin:410000,pensionMax:6590000, // 2026.7~2027.6 기준소득월액 하한·상한
-  healthRate:.03595,ltcRatio:.1314,employRate:.009,
-  unemployMax:68100,unemployMin:10320*8*.8,
-  minWage:{2026:10320,2027:10700}
-};
-// 부동소수점 오차(예: 3,000,000 × 0.009 = 26999.999…)로 10원이 깎이지 않도록 먼저 소수 셋째 자리에서 반올림한다.
-const floor10=n=>Math.floor(Math.round(n*1000)/1000/10)*10;
+// 요율·세율은 assets/rates.js(window.KR_RATES)에서 읽는다.
+const RATES=window.KR_RATES;
+const PAY2026={employRate:RATES.employment.worker,unemployMax:RATES.unemployment.dailyMax,unemployMin:RATES.unemploymentDailyMin(),minWage:RATES.minimumWage};
+const floor10=RATES.floor10;
 const selected=id=>$(id)?.value;
-
-function insuranceOf(monthly){
-  if(monthly<=0)return {pension:0,health:0,ltc:0,employ:0,total:0,base:0};
-  const base=Math.min(Math.max(Math.floor(monthly/1000)*1000,PAY2026.pensionMin),PAY2026.pensionMax);
-  const pension=floor10(base*PAY2026.pensionRate);
-  const health=floor10(monthly*PAY2026.healthRate);
-  const ltc=floor10(health*PAY2026.ltcRatio);
-  const employ=floor10(monthly*PAY2026.employRate);
-  return {pension,health,ltc,employ,total:pension+health+ltc+employ,base};
-}
-
-// 국세청 근로소득 간이세액표(withholding-table.js) 조회. monthly는 비과세 제외 월급여.
-function withholdingOf(monthly,family=1,children=0,ratio=100){
-  const table=window.WITHHOLDING_TABLE;
-  if(!table)throw new Error('간이세액표 데이터가 없습니다.');
-  const fam=Math.min(Math.max(Math.round(family),1),11);
-  const k=monthly/1000;
-  let tax=0;
-  if(k>=770&&k<10000){
-    const row=table.rows.find(r=>k>=r[0]&&k<r[1]);
-    tax=row?row[1+fam]:0;
-  }else if(k>=10000){
-    const base=table.top[fam-1];
-    if(monthly<=10000000)tax=base;
-    else if(monthly<=14000000)tax=base+(monthly-10000000)*.98*.35+25000;
-    else if(monthly<=28000000)tax=base+1397000+(monthly-14000000)*.98*.38;
-    else if(monthly<=30000000)tax=base+6610600+(monthly-28000000)*.98*.40;
-    else if(monthly<=45000000)tax=base+7394600+(monthly-30000000)*.40;
-    else if(monthly<=87000000)tax=base+13394600+(monthly-45000000)*.42;
-    else tax=base+31034600+(monthly-87000000)*.45;
-  }
-  const kids=Math.max(0,Math.round(children));
-  const childCut=kids===0?0:kids===1?12500:kids===2?29160:29160+(kids-2)*25000;
-  const income=floor10(Math.max(0,tax-childCut)*ratio/100);
-  return {income,local:floor10(income*.1),tableTax:tax,childCut};
-}
+const insuranceOf=monthly=>RATES.insurance(monthly);
+const withholdingOf=(monthly,family=1,children=0,ratio=100)=>RATES.withholding(monthly,family,children,ratio);
 
 function netMonthly(gross,nontax,family,children){
   const taxable=Math.max(0,gross-nontax);
@@ -51,16 +13,7 @@ function netMonthly(gross,nontax,family,children){
   return {taxable,ins,tax,net:gross-ins.total-tax.income-tax.local};
 }
 
-function progressiveTax(b){
-  if(b<=14e6)return b*.06;
-  if(b<=50e6)return b*.15-1.26e6;
-  if(b<=88e6)return b*.24-5.76e6;
-  if(b<=150e6)return b*.35-15.44e6;
-  if(b<=300e6)return b*.38-19.94e6;
-  if(b<=500e6)return b*.40-25.94e6;
-  if(b<=1e9)return b*.42-35.94e6;
-  return b*.45-65.94e6;
-}
+const progressiveTax=b=>RATES.incomeTax(b);
 
 function retirementTax(gross,serviceYears){
   const years=Math.max(1,Math.ceil(serviceYears));
@@ -148,17 +101,18 @@ window.EXTRA_CALCULATORS={
   },
   'eitc':()=>{
     const type=selected('household'),income=positive('income'),kids=+selected('kids'),assets=positive('assets');
-    const plans={single:[4e6,9e6,22e6,1.65e6],one:[7e6,14e6,32e6,2.85e6],dual:[8e6,17e6,44e6,3.3e6]};
+    const plans=RATES.eitc;
     const effective=type==='single'&&kids>0?'one':type;
     const [rise,flat,cap,max]=plans[effective];
     let work=income<rise?income*max/rise:income<=flat?max:income<cap?max-(income-flat)*max/(cap-flat):0;
     let child=0;
-    if(effective!=='single'&&kids>0&&income<7e7){
-      const start=effective==='one'?21e6:25e6,span=effective==='one'?49e6:45e6;
-      const per=income<start?1e6:Math.max(5e5,1e6-(income-start)*5e5/span);
+    const C=RATES.eitc.child;
+    if(effective!=='single'&&kids>0&&income<C.incomeCap){
+      const start=C.start[effective],span=C.span[effective];
+      const per=income<start?C.max:Math.max(C.min,C.max-(income-start)*(C.max-C.min)/span);
       child=per*kids;
     }
-    const assetRate=assets>=2.4e8?0:assets>=1.7e8?.5:1;
+    const assetRate=assets>=RATES.eitc.assetCap?0:assets>=RATES.eitc.assetHalf?.5:1;
     work*=assetRate;child*=assetRate;
     const label={single:'단독가구',one:'홑벌이가구',dual:'맞벌이가구'}[effective];
     render(won(work+child),[
@@ -173,11 +127,11 @@ window.EXTRA_CALCULATORS={
     if(!requirePositive(['wage']))return;
     const kind=selected('kind'),wage=positive('wage'),priority=selected('company')==='priority';
     if(kind==='spouse'){
-      const daily=wage/209*8,total=daily*20,gov=priority?Math.min(total,1684210):0;
+      const daily=wage/209*8,total=daily*20,gov=priority?Math.min(total,RATES.maternity.spouseCap):0;
       render(won(total),[['휴가 일수','20일 (근로일 기준)'],['1일 통상임금',won(daily)],['고용보험 지급',won(gov)],['회사 지급',won(total-gov)],['정부 지원 대상',priority?'우선지원대상기업':'대규모기업은 회사가 전액 지급']]);
       return;
     }
-    const multiple=kind==='multiple',totalDays=multiple?120:90,paidDays=multiple?75:60,capMonth=2200000;
+    const multiple=kind==='multiple',totalDays=multiple?120:90,paidDays=multiple?75:60,capMonth=RATES.maternity.monthlyCap;
     const govMonths=priority?totalDays/30:(totalDays-paidDays)/30,capped=Math.min(wage,capMonth);
     const gov=capped*govMonths,total=wage*paidDays/30+capped*(totalDays-paidDays)/30,company=total-gov;
     render(won(total),[
@@ -241,14 +195,13 @@ window.EXTRA_CALCULATORS={
   'property-tax':()=>{
     if(!requirePositive(['price']))return;
     const price=positive('price'),oneHouse=selected('oneHouse')==='yes',urban=selected('urban')==='yes';
-    const ratio=oneHouse?(price<=3e8?.43:price<=6e8?.44:.45):.6;
+    const P=RATES.propertyTax;
+    const ratio=oneHouse?P.oneHouseRatio(price):P.ratio;
     const base=Math.floor(price*ratio/1000)*1000;
-    const special=oneHouse&&price<=9e8;
-    const tax=special
-      ?(base<=6e7?base*.0005:base<=1.5e8?30000+(base-6e7)*.001:base<=3e8?120000+(base-1.5e8)*.002:420000+(base-3e8)*.0035)
-      :(base<=6e7?base*.001:base<=1.5e8?60000+(base-6e7)*.0015:base<=3e8?195000+(base-1.5e8)*.0025:570000+(base-3e8)*.004);
-    const urbanTax=urban?base*.0014:0,edu=tax*.2,total=tax+urbanTax+edu;
-    const split=tax>200000;
+    const special=oneHouse&&price<=P.specialPriceCap;
+    const tax=P.tax(base,special);
+    const urbanTax=urban?base*P.urbanRate:0,edu=tax*P.eduRatio,total=tax+urbanTax+edu;
+    const split=tax>P.splitThreshold;
     render(won(total)+' / 년',[
       ['공정시장가액비율',(ratio*100)+'%'],
       ['과세표준',won(base)],
@@ -274,9 +227,10 @@ window.EXTRA_CALCULATORS={
 
   'irp-tax-credit':()=>{
     const income=positive('income'),saving=positive('saving'),irp=positive('irp'),kind=selected('kind');
-    const rate=(kind==='salary'?income<=55e6:income<=45e6)?.15:.12;
-    const eligible=Math.min(Math.min(saving,6e6)+irp,9e6),national=eligible*rate,local=national*.1;
-    render(won(national+local),[['세액공제 대상 납입액',won(eligible)],['적용 공제율',number(rate*100)+'% (지방소득세 별도)'],['소득세 공제 예상액',won(national)],['지방소득세 포함 절세액',won(national+local)],['900만원 한도까지 남은 금액',won(Math.max(0,9e6-eligible))]]);
+    const P=RATES.credits.pensionAccount;
+    const rate=(kind==='salary'?income<=P.lowSalary:income<=P.lowIncome)?P.lowRate:P.highRate;
+    const eligible=Math.min(Math.min(saving,P.savingCap)+irp,P.totalCap),national=eligible*rate,local=national*RATES.localIncomeTaxRatio;
+    render(won(national+local),[['세액공제 대상 납입액',won(eligible)],['적용 공제율',number(rate*100)+'% (지방소득세 별도)'],['소득세 공제 예상액',won(national)],['지방소득세 포함 절세액',won(national+local)],['합산 한도까지 남은 금액',won(Math.max(0,P.totalCap-eligible))]]);
   },
   'national-pension-early':()=>{
     if(!requirePositive(['normal']))return;
@@ -291,13 +245,13 @@ window.EXTRA_CALCULATORS={
   },
   'basic-pension':()=>{
     const couple=selected('household')==='couple',income=positive('income'),assets=positive('assets'),debt=positive('debt'),deduct=positive('deduct');
-    const converted=Math.max(0,assets-debt-deduct)*.04/12,recognized=income+converted,limit=couple?3952000:2470000;
+    const converted=Math.max(0,assets-debt-deduct)*.04/12,recognized=income+converted,limit=RATES.basicPension[couple?'couple':'single'];
     render(recognized<=limit?'선정기준 이내':'선정기준 초과',[['월 소득평가액',won(income)],['재산의 월 소득환산액',won(converted)],['예상 소득인정액',won(recognized)],['2026년 선정기준액',won(limit)],['기준과의 차이',won(Math.abs(limit-recognized))]]);
   },
   'car-tax-prepay':()=>{
     if(!requirePositive(['annual']))return;
-    const annual=positive('annual'),month=+selected('month'),remain=Math.max(0,12-month),discount=annual*remain/12*.05;
-    render(won(annual-discount),[['자동차세 연세액',won(annual)],['공제 대상 기간',remain+'개월'],['실질 할인율',number(remain/12*5,2)+'%'],['예상 공제액',won(discount)]]);
+    const annual=positive('annual'),month=+selected('month'),remain=Math.max(0,12-month),discount=annual*remain/12*RATES.carTaxPrepayRate;
+    render(won(annual-discount),[['자동차세 연세액',won(annual)],['공제 대상 기간',remain+'개월'],['실질 할인율',number(remain/12*RATES.carTaxPrepayRate*100,2)+'%'],['예상 공제액',won(discount)]]);
   },
   'health-refund':()=>{
     const paid=positive('paid'),cap=positive('cap'),excluded=positive('excluded'),eligible=Math.max(0,paid-excluded);
@@ -306,7 +260,8 @@ window.EXTRA_CALCULATORS={
   },
   'rent-tax-credit':()=>{
     const salary=positive('salary'),rent=positive('rent'),ok=selected('eligible')==='yes';
-    const rate=salary<=55e6?.17:.15,base=ok&&salary<=8e7?Math.min(rent,1e7):0;
+    const M=RATES.credits.rent;
+    const rate=salary<=M.lowSalary?M.lowRate:M.highRate,base=ok&&salary<=M.maxSalary?Math.min(rent,M.cap):0;
     render(won(base*rate),[['연간 월세액',won(rent)],['공제 대상 월세액',won(base)],['적용 공제율',base?number(rate*100)+'%':'대상 아님'],['월 평균 절세 효과',won(base*rate/12)]]);
   },
   'mortgage-dsr':()=>{
@@ -323,12 +278,13 @@ window.EXTRA_CALCULATORS={
     let months=(today.getFullYear()-birth.getFullYear())*12+(today.getMonth()-birth.getMonth());
     if(today.getDate()<birth.getDate())months--;
     const born=birth<=today,age=born?Math.max(0,months):0;
-    const region=Number(selected('region')),voucher=selected('order')==='1'?2e6:3e6,daycare=selected('daycare')==='yes';
-    const parental=m=>m<12?1e6:m<24?5e5:0;
-    const thisParental=born?parental(age):0,thisChild=born&&age<108?region:0;
+    const region=Number(selected('region')),voucher=RATES.childcare.voucher[selected('order')==='1'?0:1],daycare=selected('daycare')==='yes';
+    const [benefit0,benefit1]=RATES.childcare.parentBenefit,months108=RATES.childcare.allowanceMonths;
+    const parental=m=>m<12?benefit0:m<24?benefit1:0;
+    const thisParental=born?parental(age):0,thisChild=born&&age<months108?region:0;
     let parentalLeft=0;
     for(let m=age;m<24;m++)parentalLeft+=parental(m);
-    const childLeft=Math.max(0,108-age)*region;
+    const childLeft=Math.max(0,months108-age)*region;
     render(won(thisParental+thisChild)+' / 이번 달',[
       ['아이 개월 수',born?`${age}개월`:'출생 전'],
       ['첫만남이용권 (1회, 바우처)',won(voucher)],
@@ -336,7 +292,7 @@ window.EXTRA_CALCULATORS={
       ['이번 달 아동수당',won(thisChild)],
       ['앞으로 받을 부모급여',won(parentalLeft)],
       ['앞으로 받을 아동수당 (만 9세 전까지)',won(childLeft)],
-      ['출생부터 만 9세 전까지 총액',won(voucher+18e6+region*108)]
+      ['출생부터 만 9세 전까지 총액',won(voucher+(benefit0+benefit1)*12+region*months108)]
     ]);
   },
   'work-hours':()=>{
@@ -374,29 +330,54 @@ window.EXTRA_CALCULATORS={
   },
   'jongbu-tax':()=>{
     if(!requirePositive(['price']))return;
-    const price=positive('price'),type=selected('houses'),one=type==='one';
-    const progressive=(base,bands)=>{let tax=0,prev=0;for(const [limit,rate] of bands){if(base<=prev)break;tax+=(Math.min(base,limit)-prev)*rate;prev=limit;}return tax;};
-    const general=[[3e8,.005],[6e8,.007],[12e8,.01],[25e8,.013],[50e8,.015],[94e8,.02],[Infinity,.027]];
-    const heavy=[[3e8,.005],[6e8,.007],[12e8,.01],[25e8,.02],[50e8,.03],[94e8,.04],[Infinity,.05]];
-    // 재산세 표준세율 (재산세 중복분 공제 계산용)
-    const propertyStandard=b=>b<=6e7?b*.001:b<=1.5e8?6e4+(b-6e7)*.0015:b<=3e8?19.5e4+(b-1.5e8)*.0025:57e4+(b-3e8)*.004;
-    const deduction=one?12e8:9e8,base=Math.max(0,price-deduction)*.6;
-    if(base<=0){render('종합부동산세 대상이 아니에요',[['공시가격 합계',won(price)],['기본공제',won(deduction)],['과세표준','0원']]);return;}
-    const gross=progressive(base,type==='three'?heavy:general);
-    const propertyTax=propertyStandard(price*(one?.45:.6));
-    const overlap=propertyTax*Math.min(1,propertyStandard(base*.6)/propertyStandard(price*.6));
-    const afterOverlap=Math.max(0,gross-overlap);
+    const price=positive('price'),type=selected('houses'),prevTotal=positive('prevTotal');
+    // 만원 단위로 적는 실수를 막는다 (작년 보유세가 1만원 미만이면 세부담상한이 사실상 0원이 되어 결과가 크게 틀어진다)
+    if(prevTotal>0&&prevTotal<10000){alert('작년 재산세+종부세 합계는 원 단위로 입력해 주세요. 예: 300만원 → 3,000,000');return;}
     const age=positive('age'),years=positive('years');
-    const credit=one?Math.min(.8,(age>=70?.4:age>=65?.3:age>=60?.2:0)+(years>=15?.5:years>=10?.4:years>=5?.2:0)):0;
-    const jongbu=afterOverlap*(1-credit),rural=jongbu*.2;
-    render(won(jongbu+rural),[
-      ['기본공제',won(deduction)],
-      ['과세표준 (공제 후 × 60%)',won(base)],
-      ['산출세액',won(gross)],
-      ['재산세 중복분 공제','-'+won(overlap)],
-      ['1세대 1주택 세액공제',one?`${number(credit*100)}% (-${won(afterOverlap*credit)})`:'해당 없음'],
-      ['종합부동산세',won(jongbu)],
-      ['농어촌특별세 (20%)',won(rural)]
+    const progressive=(base,bands)=>{let tax=0,prev=0;for(const [limit,rate] of bands){if(base<=prev)break;tax+=(Math.min(base,limit)-prev)*rate;prev=limit;}return tax;};
+    const J=RATES.jongbu,general=J.general,heavy=J.heavy,PT=RATES.propertyTax;
+    // 재산세 표준세율 (재산세 부과액 근사와 재산세 중복분 공제 계산용)
+    const propertyStandard=b=>PT.tax(b,false);
+    const seniorCredit=J.credit(age,years);
+    const oneHouse=type==='one'||type==='couple';
+    // 재산세 공정시장가액비율: 1세대 1주택은 공시가격에 따라 43~45%, 그 외 60%. 재산세 부과액과 중복분 공제 비율 모두 이 비율로 계산한다
+    const propertyRatio=oneHouse?PT.oneHouseRatio(price):PT.ratio;
+    // 한 사람(또는 단독명의) 기준 종부세. share = 보유 지분의 공시가격, propertyTax = 그 지분에 부과된 재산세
+    const person=({share,deduction,bands,propertyTax,credit})=>{
+      const base=Math.max(0,share-deduction)*J.ratio;
+      if(base<=0)return {base:0,gross:0,overlap:0,creditAmount:0,tax:0};
+      const gross=progressive(base,bands);
+      const overlap=Math.min(gross,propertyTax*Math.min(1,propertyStandard(base*propertyRatio)/propertyStandard(share*propertyRatio)));
+      const afterOverlap=gross-overlap,creditAmount=afterOverlap*credit;
+      return {base,gross,overlap,creditAmount,tax:afterOverlap-creditAmount};
+    };
+    const propertyTaxTotal=propertyStandard(price*propertyRatio);
+    const single=person({share:price,deduction:oneHouse?J.oneHouseDeduction:J.deduction,bands:type==='three'?heavy:general,propertyTax:propertyTaxTotal,credit:oneHouse?seniorCredit:0});
+    let chosen=single,label=oneHouse?'1세대 1주택 (12억원 공제)':(type==='three'?'3주택 이상':'2주택 이하'),coupleRows=[];
+    if(type==='couple'){
+      const half=person({share:price/2,deduction:J.deduction,bands:general,propertyTax:propertyTaxTotal/2,credit:0});
+      const coupleTax=half.tax*2;
+      coupleRows=[['부부 각자 9억원 공제로 낼 때',won(coupleTax*(1+J.ruralRate))],['1주택 특례(12억원 공제·세액공제) 신청 시',won(single.tax*(1+J.ruralRate))]];
+      if(coupleTax<single.tax){chosen={base:half.base*2,gross:half.gross*2,overlap:half.overlap*2,creditAmount:0,tax:coupleTax};label='부부 공동명의 (각자 9억원 공제)';}
+      else label='부부 공동명의 → 1주택 특례 신청이 유리';
+    }
+    if(chosen.base<=0){render('종합부동산세 대상이 아니에요',[['공시가격 합계',won(price)],['적용 방식',label],...coupleRows]);return;}
+    let tax=chosen.tax,capped=0;
+    if(prevTotal>0){
+      const limit=Math.max(0,prevTotal*J.burdenCap-propertyTaxTotal);
+      if(tax>limit){capped=tax-limit;tax=limit;}
+    }
+    const rural=tax*J.ruralRate;
+    render(won(tax+rural),[
+      ['적용 방식',label],
+      ['과세표준 (공제 후 × 60%)',won(chosen.base)],
+      ['산출세액',won(chosen.gross)],
+      ['재산세 중복분 공제','-'+won(chosen.overlap)],
+      ['1세대 1주택 세액공제',chosen.creditAmount?`${number(seniorCredit*100)}% (-${won(chosen.creditAmount)})`:'해당 없음'],
+      ['세부담상한 (전년도 보유세 150%)',prevTotal>0?(capped?'-'+won(capped):'상한 이내'):'전년도 세액 입력 시 반영'],
+      ['종합부동산세',won(tax)],
+      ['농어촌특별세 (20%)',won(rural)],
+      ...coupleRows
     ]);
   },
   'dividend':()=>{
@@ -415,18 +396,20 @@ window.EXTRA_CALCULATORS={
   'lunar-converter':()=>{
     let fmt;
     try{
-      fmt=new Intl.DateTimeFormat('ko-KR-u-ca-chinese',{year:'numeric',month:'numeric',day:'numeric',timeZone:'Asia/Seoul'});
-      if(fmt.resolvedOptions().calendar!=='chinese')throw new Error('unsupported');
+      // 한국 전통력(단기력, 한국 표준시 기준). 중국력은 합삭 기준 시각이 달라 몇 년에 한 번씩 하루가 어긋난다.
+      // 양력 날짜 자체를 UTC 정오로 다뤄 방문자 기기의 시간대와 상관없이 같은 날짜를 변환한다
+      fmt=new Intl.DateTimeFormat('ko-KR-u-ca-dangi',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'});
+      if(fmt.resolvedOptions().calendar!=='dangi')throw new Error('unsupported');
     }catch(e){alert('이 브라우저는 음력 계산을 지원하지 않아요. 최신 크롬·사파리·엣지에서 이용해 주세요.');return;}
     const lunarOf=d=>{
       const p=Object.fromEntries(fmt.formatToParts(d).map(x=>[x.type,x.value]));
       return {y:Number(p.relatedYear||p.year),m:parseInt(String(p.month).replace(/\D/g,''),10),leap:/윤|bis/.test(p.month),d:Number(p.day)};
     };
-    const noon=(y,m,d)=>new Date(y,m,d,12);
+    const noon=(y,m,d)=>new Date(Date.UTC(y,m,d,12));
     const idx=y=>((y-4)%12+12)%12;
     const ganji=y=>'갑을병정무기경신임계'[((y-4)%10+10)%10]+'자축인묘진사오미신유술해'[idx(y)];
     const animal=y=>['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'][idx(y)];
-    const solarText=d=>`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;
+    const solarText=d=>`${d.getUTCFullYear()}년 ${d.getUTCMonth()+1}월 ${d.getUTCDate()}일 (${'일월화수목금토'[d.getUTCDay()]})`;
     const findSolar=(y,m,d,leap)=>{
       for(let i=0;i<420;i++){const day=noon(y,0,1+i),l=lunarOf(day);if(l.y===y&&l.m===m&&l.d===d&&l.leap===leap)return day;}
       return null;

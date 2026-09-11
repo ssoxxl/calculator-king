@@ -81,6 +81,7 @@ footer strong{color:#fff;}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header>
@@ -212,32 +213,23 @@ function calc(){
   const months=+document.getElementById('months').value;
   if(!wage){alert('월 통상임금을 입력해주세요.');return;}
 
-  // 6+6 부모 육아휴직 상한액
-  const both6Caps=[0,2500000,2500000,3000000,3500000,4000000,4500000];
-
+  const P=window.KR_RATES.parentalLeave;
   let monthlyPays=[];
   let total=0;
 
   for(let m=1;m<=months;m++){
     let pay;
     if(type==='both'&&m<=6){
-      // 6+6 제도: 통상임금 100%, 상한은 월별 상이
-      const cap=both6Caps[m]||2500000;
-      pay=Math.min(wage,cap);
-      pay=Math.max(pay,700000);
+      // 6+6 부모 육아휴직: 통상임금 100%, 달마다 상한이 올라감
+      pay=Math.min(wage,P.sixPlusSixCaps[m-1]);
     } else if(m<=3){
-      // 1~3개월: 100%, 상한250만, 하한70만
-      pay=Math.min(wage,2500000);
-      pay=Math.max(pay,700000);
+      pay=Math.min(wage,P.firstCap);
     } else if(m<=6){
-      // 4~6개월: 통상임금 100%, 상한200만, 하한70만
-      pay=Math.min(wage,2000000);
-      pay=Math.max(pay,700000);
+      pay=Math.min(wage,P.secondCap);
     } else {
-      // 7개월~: 80%, 상한160만, 하한70만
-      pay=Math.min(Math.round(wage*0.8),1600000);
-      pay=Math.max(pay,700000);
+      pay=Math.min(Math.round(wage*P.laterRatio),P.laterCap);
     }
+    pay=Math.max(pay,P.minimum);
     monthlyPays.push(pay);
     total+=pay;
   }

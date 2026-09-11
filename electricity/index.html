@@ -81,6 +81,7 @@ footer strong{color:#fff;}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/legacy-skin.css">
+<script src="../assets/rates.js"></script>
 </head>
 <body>
 <header>
@@ -167,37 +168,33 @@ function calc(){
   if(!kwh){alert('사용량을 입력해주세요.');return;}
 
   // 2026년 한전 주택용 요금
-  let base, elec, tier;
-  if(summer){
-    // 여름 한시 완화
-    if(kwh<=300){base=910;elec=kwh*120;tier=1;}
-    else if(kwh<=450){base=1600;elec=300*120+(kwh-300)*214.6;tier=2;}
-    else{base=7300;elec=300*120+150*214.6+(kwh-450)*307.3;tier=3;}
-  } else {
-    if(kwh<=200){base=910;elec=kwh*120;tier=1;}
-    else if(kwh<=400){base=1600;elec=200*120+(kwh-200)*214.6;tier=2;}
-    else{base=7300;elec=200*120+200*214.6+(kwh-400)*307.3;tier=3;}
-  }
+  const E=window.KR_RATES.electricity,tiers=summer?E.summer:E.normal;
+  let base=0,elec=0,tier=1,prev=0;
+  tiers.forEach(([limit,basic,rate],i)=>{
+    elec+=Math.max(0,Math.min(kwh,limit)-prev)*rate;
+    if(kwh>prev){base=basic;tier=i+1;}
+    prev=limit;
+  });
 
-  const climate=Math.round(kwh*9); // 기후환경요금 kWh당 9원
-  const fuel=Math.round(kwh*5); // 연료비조정요금 kWh당 +5원 (최근 분기 고시값)
+  const climate=Math.round(kwh*E.climatePerKwh); // 기후환경요금
+  const fuel=Math.round(kwh*E.fuelPerKwh); // 연료비조정요금 (분기 고시)
   const subtotal=Math.floor(base+elec+climate+fuel); // 전기요금계 원 미만 절사
-  const vat=Math.round(subtotal*0.1); // 부가세 10%
-  const fund=Math.floor(subtotal*0.027/10)*10; // 전력산업기반기금 2.7% (2025년 7월~), 10원 미만 절사
+  const vat=Math.round(subtotal*E.vat); // 부가가치세
+  const fund=Math.floor(subtotal*E.fundRate/10)*10; // 전력산업기반기금, 10원 미만 절사
   const total=Math.floor((subtotal+vat+fund)/10)*10;
 
-  const tierColors=['','#16a34a','#f59e0b','#ef4444'];
-  const tierLabels=summer?['','1단계 (300kWh 이하)','2단계 (301~450kWh)','3단계 (450kWh 초과)']:['','1단계 (200kWh 이하)','2단계 (201~400kWh)','3단계 (400kWh 초과)'];
-  const tierMax=summer?[300,450,999]:[200,400,999];
-  const tier3Start=summer?450:400;
+  const tierColors=['','#166534','#92400e','#991b1b'];
+  const tierLabels=['',`1단계 (${tiers[0][0]}kWh 이하)`,`2단계 (${tiers[0][0]+1}~${tiers[1][0]}kWh)`,`3단계 (${tiers[1][0]}kWh 초과)`];
+  const tierMax=[tiers[0][0],tiers[1][0],999];
+  const tier3Start=tiers[1][0];
 
   document.getElementById('res-main').textContent=won(total);
 
   // 구간 표시
   const tierPct=Math.min(100,kwh/tierMax[tier-1]*100);
   let warnMsg='';
-  if(tier===2&&kwh>tier3Start-50) warnMsg=`<div class="warn-box">⚠️ ${tier3Start}kWh를 넘으면 기본요금이 7,300원으로 오르고 초과분에 kWh당 307.3원이 붙어요. 지금 ${tier3Start-kwh}kWh 남았어요.</div>`;
-  if(tier===3) warnMsg=`<div class="warn-box">⚠️ 3단계 구간입니다. kWh당 307.3원으로 요금이 높습니다.</div>`;
+  if(tier===2&&kwh>tier3Start-50) warnMsg=`<div class="warn-box">⚠️ ${tier3Start}kWh를 넘으면 기본요금이 ${tiers[2][1].toLocaleString('ko-KR')}원으로 오르고 초과분에 kWh당 ${tiers[2][2]}원이 붙어요. 지금 ${tier3Start-kwh}kWh 남았어요.</div>`;
+  if(tier===3) warnMsg=`<div class="warn-box">⚠️ 3단계 구간이에요. kWh당 ${tiers[2][2]}원으로 요금이 높아요.</div>`;
 
   document.getElementById('tier-info').innerHTML=`
     <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:${tierColors[tier]}">현재 ${tierLabels[tier]}</div>
@@ -207,11 +204,11 @@ function calc(){
     <div class="result-row"><span>월 사용량</span><strong>${comma(kwh)} kWh</strong></div>
     <div class="result-row"><span>기본요금</span><strong>${won(base)}</strong></div>
     <div class="result-row"><span>전력량요금</span><strong>${won(Math.round(elec))}</strong></div>
-    <div class="result-row"><span>기후환경요금 (kWh당 9원)</span><strong>${won(climate)}</strong></div>
-    <div class="result-row"><span>연료비조정요금 (kWh당 5원)</span><strong>${won(fuel)}</strong></div>
+    <div class="result-row"><span>기후환경요금 (kWh당 ${E.climatePerKwh}원)</span><strong>${won(climate)}</strong></div>
+    <div class="result-row"><span>연료비조정요금 (kWh당 ${E.fuelPerKwh}원)</span><strong>${won(fuel)}</strong></div>
     <div class="result-row"><span>전기요금계</span><strong>${won(subtotal)}</strong></div>
     <div class="result-row"><span>부가가치세 (10%)</span><strong>${won(vat)}</strong></div>
-    <div class="result-row"><span>전력산업기반기금 (2.7%)</span><strong>${won(fund)}</strong></div>
+    <div class="result-row"><span>전력산업기반기금 (${+(E.fundRate*100).toFixed(1)}%)</span><strong>${won(fund)}</strong></div>
     <div class="result-row"><span>최종 청구 예상액</span><strong style="color:#0d9488">${won(total)}</strong></div>
     <div style="font-size:11px;color:#888;margin-top:8px">※ ${summer?'여름 한시 완화':'일반'} 요금 기준. 연료비조정요금은 분기마다 고시되며, TV수신료·복지할인은 미포함이에요.</div>
   `;

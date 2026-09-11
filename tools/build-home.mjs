@@ -193,6 +193,7 @@ const html=`<!DOCTYPE html>
 
 <script type="application/json" id="searchData">${searchIndex}</script>
 <script type="application/json" id="seasonData">${seasonData}</script>
+<script src="/assets/rates.js"></script>
 <script src="/assets/home.js"></script>
 </body>
 </html>
