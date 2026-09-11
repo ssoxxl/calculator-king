@@ -12,7 +12,6 @@
 <meta charset="UTF-8">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8390635644947402" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <title>BMI 계산기 2026 — 비만도 측정 | 계산왕</title>
 <meta name="description" content="BMI 체질량지수 계산기. 키와 몸무게로 비만도를 측정하세요. 저체중·정상·과체중·비만 기준 표시.">
 <link rel="canonical" href="https://calc.ssoxxl.com/bmi/">
@@ -88,20 +87,20 @@ footer strong{color:#fff;}
 body{transition:background .3s,color .3s;}
 
 </style>
-<meta property="og:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta property="og:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 </head>
 <body>
-<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge" style="background:#0a0a0f;color:#FFD700;font-family:'Courier New',monospace;border:1px solid #D4A017;">王</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
+<header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
 </header>
 <div class="wrap"><div class="calc-card">
-  <div class="card-hero"><span class="card-tag">생활</span><h1>BMI 체질량지수 계산기</h1><p>키와 몸무게로 비만도를 측정합니다. WHO 및 아시아·태평양 기준 적용.</p></div>
+  <div class="card-hero"><span class="card-tag">생활·건강</span><h1>BMI 체질량지수 계산기</h1><p>키와 몸무게로 비만도를 측정합니다. WHO 및 아시아·태평양 기준 적용.</p></div>
   <div class="card-body">
 <div class="field-row">
       <div class="field"><label>키 (cm)</label><input type="number" id="height" placeholder="170"></div>
@@ -113,7 +112,7 @@ body{transition:background .3s,color .3s;}
       <div class="result-main" id="bmiVal"></div>
       <div class="result-grade" id="bmiGrade"></div>
       <div class="bmi-bar"><div class="bmi-marker" id="bmiMarker"></div></div>
-      <div class="bmi-labels"><span>저체중</span><span>정상</span><span>과체중</span><span>비만</span><span>고도비만</span></div>
+      <div class="bmi-labels"><span>저체중</span><span>정상</span><span>비만전단계</span><span>비만</span><span>고도비만</span></div>
       <div id="detail" style="margin-top:12px"></div>
     </div>
 <div style="margin-top:18px;">
@@ -175,9 +174,10 @@ function calc(){
   let grade,color,borderColor,bgColor;
   if(bmi<18.5){grade='저체중 😟';color='#60a5fa';borderColor='#93c5fd';bgColor='#eff6ff';}
   else if(bmi<23){grade='정상 😊';color='#10b981';borderColor='#6ee7b7';bgColor='#ecfdf5';}
-  else if(bmi<25){grade='과체중 😐';color='#f59e0b';borderColor='#fcd34d';bgColor='#fffbeb';}
+  else if(bmi<25){grade='비만 전단계 😐';color='#f59e0b';borderColor='#fcd34d';bgColor='#fffbeb';}
   else if(bmi<30){grade='비만 1단계 😟';color='#f87171';borderColor='#fca5a5';bgColor='#fff1f2';}
-  else{grade='고도비만 😨';color='#ef4444';borderColor='#f87171';bgColor='#fff1f2';}
+  else if(bmi<35){grade='비만 2단계 😨';color='#ef4444';borderColor='#f87171';bgColor='#fff1f2';}
+  else{grade='비만 3단계 (고도비만) 😨';color='#b91c1c';borderColor='#f87171';bgColor='#fff1f2';}
   const idealMin=(18.5*h*h);
   const idealMax=(22.9*h*h);
   const markerPct=Math.min(Math.max((bmi-15)/25*100,0),100);
@@ -200,5 +200,6 @@ function calc(){
 }
 </script>
 <script src="../assets/money-inputs.js"></script>
+<script src="../assets/site.js"></script>
 </body></html>
 

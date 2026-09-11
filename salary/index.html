@@ -20,10 +20,10 @@
     <meta property="og:title" content="연봉 실수령액 계산기 2026 — 계산왕">
     <meta property="og:description" content="2026년 4대보험 소득세 공제 후 연봉 실수령액을 계산하세요.">
     <meta property="og:url" content="https://calc.ssoxxl.com/salary/">
-    <meta property="og:image" content="https://calc.ssoxxl.com/og-image.svg">
+    <meta property="og:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="연봉 실수령액 계산기 2026 — 계산왕">
     <meta name="twitter:description" content="2026년 4대보험 소득세 공제 후 연봉 실수령액을 계산하세요.">
@@ -108,7 +108,7 @@ body{transition:background .3s,color .3s;}
 </head>
 <body>
 <header>
-  <a href="../" class="logo"><span>계산왕</span><span class="logo-badge" style="background:#0a0a0f;color:#FFD700;font-family:'Courier New',monospace;border:1px solid #D4A017;">王</span></a>
+  <a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a>
   <a href="../" class="back-btn">← 전체 계산기</a>
 <button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
 </header>
@@ -116,7 +116,7 @@ body{transition:background .3s,color .3s;}
 <div class="wrap">
 <div class="calc-card">
   <div class="card-hero">
-    <span class="card-tag">직장인</span>
+    <span class="card-tag">급여·근로</span>
     <h1>연봉 실수령액 계산기</h1>
     <p>2026년 최신 4대보험·소득세 기준으로 실제 월급을 계산합니다</p>
   </div>
@@ -261,41 +261,17 @@ function calc(){
   const nontax=+document.getElementById('nontax').value||0;
   if(!annual){alert('연봉을 입력해주세요.');return;}
   const monthly=Math.floor(annual/12);
-  const taxMonthly=monthly-nontax;
-  const national=Math.floor(Math.floor(taxMonthly/1000)*1000*0.0475/10)*10;
-  const health=Math.floor(taxMonthly*0.03595);
-  const longterm=Math.floor(health*0.1314);
-  const employ=Math.floor(taxMonthly*0.009);
-  function earnedDeduct(y){
-    if(y<=5000000)return y*0.70;
-    if(y<=15000000)return 3500000+(y-5000000)*0.40;
-    if(y<=45000000)return 7500000+(y-15000000)*0.15;
-    if(y<=100000000)return 12000000+(y-45000000)*0.05;
-    return 14750000;
-  }
-  const earnedIncome=annual-earnedDeduct(annual);
-  const basicDeduct=family*1500000;
-  const insuranceAnnual=(national+health+longterm+employ)*12;
-  const specialDeduct=Math.max(1300000,insuranceAnnual);
-  const taxBase=Math.max(0,earnedIncome-basicDeduct-specialDeduct);
-  function calcTax(b){
-    if(b<=14000000)return b*0.06;
-    if(b<=50000000)return 840000+(b-14000000)*0.15;
-    if(b<=88000000)return 6240000+(b-50000000)*0.24;
-    if(b<=150000000)return 15360000+(b-88000000)*0.35;
-    if(b<=300000000)return 37060000+(b-150000000)*0.38;
-    if(b<=500000000)return 94060000+(b-300000000)*0.40;
-    return 174060000+(b-500000000)*0.42;
-  }
-  const taxAmount=calcTax(taxBase);
-  function creditLimit(y){
-    if(y<=33000000)return 740000;
-    if(y<=70000000)return Math.max(660000,740000-(y-33000000)*0.008);
-    return Math.max(500000,660000-(y-70000000)*0.5);
-  }
-  const taxCredit=Math.min(taxAmount<=1300000?taxAmount*0.55:715000+(taxAmount-1300000)*0.30,creditLimit(annual));
-  const incomeTax=Math.floor(Math.max(0,taxAmount-taxCredit)/12);
-  const localTax=Math.floor(incomeTax*0.1);
+  const taxMonthly=Math.max(0,monthly-nontax);
+  // 국민연금 기준소득월액: 2026.7~2027.6 하한 41만원, 상한 659만원
+  const f10=n=>Math.floor(Math.round(n*1000)/1000/10)*10; // 10원 미만 절사 (부동소수점 오차 보정)
+  const pensionBase=Math.min(Math.max(Math.floor(taxMonthly/1000)*1000,410000),6590000);
+  const national=f10(pensionBase*0.0475);
+  const health=f10(taxMonthly*0.03595);
+  const longterm=f10(health*0.1314);
+  const employ=f10(taxMonthly*0.009);
+  // 소득세: 국세청 근로소득 간이세액표 (비과세 제외 월급여 · 공제대상가족 수)
+  const incomeTax=lookupWithholding(taxMonthly,family);
+  const localTax=Math.floor(incomeTax*0.1/10)*10;
   const totalDeduct=national+health+longterm+employ+incomeTax+localTax;
   const takehome=monthly-totalDeduct;
   document.getElementById('take').textContent=comma(takehome)+'원 / 월';
@@ -305,16 +281,38 @@ function calc(){
     <div class="result-row"><span>건강보험 (3.595%)</span><strong style="color:#dc2626">-${won(health)}</strong></div>
     <div class="result-row"><span>장기요양 (0.9448%)</span><strong style="color:#dc2626">-${won(longterm)}</strong></div>
     <div class="result-row"><span>고용보험 (0.9%)</span><strong style="color:#dc2626">-${won(employ)}</strong></div>
-    <div class="result-row"><span>소득세</span><strong style="color:#dc2626">-${won(incomeTax)}</strong></div>
+    <div class="result-row"><span>소득세 (간이세액표)</span><strong style="color:#dc2626">-${won(incomeTax)}</strong></div>
     <div class="result-row"><span>지방소득세</span><strong style="color:#dc2626">-${won(localTax)}</strong></div>
     <div class="result-row"><span>총 공제액</span><strong style="color:#dc2626">-${won(totalDeduct)}</strong></div>
     <div class="result-row"><span>연간 실수령액</span><strong>${won(takehome*12)}</strong></div>
-    <div style="font-size:11px;color:#888;margin-top:8px">※ 2026년 기준. 실제와 다를 수 있습니다.</div>
+    <div style="font-size:11px;color:#888;margin-top:8px">※ 2026년 4대보험 요율, 국민연금 기준소득월액 상한 659만원, 국세청 근로소득 간이세액표 기준이에요. 8~20세 자녀 세액 차감은 <a href="../withholding-tax/" style="color:inherit">월급 원천징수 세액 계산기</a>에서 확인하세요.</div>
   `;
   document.getElementById('result').classList.add('show');
 }
+function lookupWithholding(monthly,family){
+  const table=window.WITHHOLDING_TABLE;
+  const fam=Math.min(Math.max(family,1),11);
+  const k=monthly/1000;
+  let tax=0;
+  if(k>=770&&k<10000){
+    const row=table.rows.find(r=>k>=r[0]&&k<r[1]);
+    tax=row?row[1+fam]:0;
+  }else if(k>=10000){
+    const base=table.top[fam-1];
+    if(monthly<=10000000)tax=base;
+    else if(monthly<=14000000)tax=base+(monthly-10000000)*0.98*0.35+25000;
+    else if(monthly<=28000000)tax=base+1397000+(monthly-14000000)*0.98*0.38;
+    else if(monthly<=30000000)tax=base+6610600+(monthly-28000000)*0.98*0.40;
+    else if(monthly<=45000000)tax=base+7394600+(monthly-30000000)*0.40;
+    else if(monthly<=87000000)tax=base+13394600+(monthly-45000000)*0.42;
+    else tax=base+31034600+(monthly-87000000)*0.45;
+  }
+  return Math.floor(tax/10)*10;
+}
 </script>
+<script src="../assets/withholding-table.js"></script>
 <script src="../assets/money-inputs.js"></script>
+<script src="../assets/site.js"></script>
 </body>
 </html>
 

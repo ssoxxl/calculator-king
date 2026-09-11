@@ -18,9 +18,9 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="계산왕">
 <meta property="og:title" content="전기세 계산기 2026 — 주택용 전기요금 계산 | 계산왕">
 <meta property="og:description" content="2026년 누진세 기준 월 전기요금을 계산하세요.">
-<meta property="og:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta property="og:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
@@ -83,13 +83,13 @@ footer strong{color:#fff;}
 </head>
 <body>
 <header>
-  <a href="../" class="logo"><span>계산왕</span><span class="logo-badge">王</span></a>
+  <a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a>
   <a href="../" class="back-btn">← 전체 계산기</a>
   <button onclick="toggleDark()" id="darkToggle" class="dark-btn">🌙</button>
 </header>
 <div class="wrap"><div class="calc-card">
   <div class="card-hero">
-    <span class="card-tag">생활</span>
+    <span class="card-tag">생활·건강</span>
     <h1>전기세 계산기 ⚡</h1>
     <p>2026년 한전 주택용 전기요금 누진세 기준으로 예상 전기요금을 계산합니다</p>
   </div>
@@ -130,7 +130,7 @@ footer strong{color:#fff;}
       <tr><td>2단계</td><td>201~400kWh</td><td>1,600원</td><td>214.6원</td></tr>
       <tr><td>3단계</td><td>400kWh 초과</td><td>7,300원</td><td>307.3원</td></tr>
     </table>
-    <p>여름(7~8월) 한시 완화 시 1단계 300kWh 이하, 2단계 300~450kWh, 3단계 450kWh 초과로 구간이 확대됩니다. 여기에 전력산업기반기금 3.7%와 부가가치세 10%가 추가로 부과됩니다.</p>
+    <p>여름(7~8월) 한시 완화 시 1단계 300kWh 이하, 2단계 300~450kWh, 3단계 450kWh 초과로 구간이 확대됩니다. 여기에 기후환경요금(kWh당 9원)과 분기마다 고시되는 연료비조정요금이 더해지고, 전기요금계에 부가가치세 10%와 전력산업기반기금 2.7%(2025년 7월부터)가 붙습니다.</p>
     <div class="faq-item"><div class="faq-q">Q. 400kWh를 조금 넘으면 요금이 얼마나 오르나요?</div><div class="faq-a">400kWh 넘는 순간 기본요금이 1,600원→7,300원으로 5,700원 오르고, 초과분도 307.3원의 높은 단가가 적용돼 요금이 크게 뛸 수 있습니다. 가능하면 400kWh 이하로 유지하는 것이 유리합니다.</div></div>
     <div class="faq-item"><div class="faq-q">Q. 전기요금 절약 방법은?</div><div class="faq-a">에어컨 설정 온도 1도 높이기, 대기전력 차단, LED 조명 교체로 월 30~50kWh 절약 가능합니다. 한전ON 앱에서 실시간 사용량 확인도 가능합니다.</div></div>
     <div class="faq-item"><div class="faq-q">Q. 오피스텔도 주택용 요금인가요?</div><div class="faq-a">주거용 오피스텔은 신청 시 주택용 전기요금 적용이 가능합니다. 한전 고객센터(123)나 한전ON에서 신청할 수 있습니다.</div></div>
@@ -178,21 +178,24 @@ function calc(){
     else{base=7300;elec=200*120+200*214.6+(kwh-400)*307.3;tier=3;}
   }
 
-  const subtotal=Math.round(base+elec);
-  const fund=Math.round(subtotal*0.037); // 전력산업기반기금 3.7%
+  const climate=Math.round(kwh*9); // 기후환경요금 kWh당 9원
+  const fuel=Math.round(kwh*5); // 연료비조정요금 kWh당 +5원 (최근 분기 고시값)
+  const subtotal=Math.floor(base+elec+climate+fuel); // 전기요금계 원 미만 절사
   const vat=Math.round(subtotal*0.1); // 부가세 10%
-  const total=subtotal+fund+vat;
+  const fund=Math.floor(subtotal*0.027/10)*10; // 전력산업기반기금 2.7% (2025년 7월~), 10원 미만 절사
+  const total=Math.floor((subtotal+vat+fund)/10)*10;
 
   const tierColors=['','#16a34a','#f59e0b','#ef4444'];
-  const tierLabels=['','1단계 (200kWh 이하)','2단계 (201~400kWh)','3단계 (400kWh 초과)'];
+  const tierLabels=summer?['','1단계 (300kWh 이하)','2단계 (301~450kWh)','3단계 (450kWh 초과)']:['','1단계 (200kWh 이하)','2단계 (201~400kWh)','3단계 (400kWh 초과)'];
   const tierMax=summer?[300,450,999]:[200,400,999];
+  const tier3Start=summer?450:400;
 
   document.getElementById('res-main').textContent=won(total);
 
   // 구간 표시
   const tierPct=Math.min(100,kwh/tierMax[tier-1]*100);
   let warnMsg='';
-  if(tier===2&&kwh>350) warnMsg=`<div class="warn-box">⚠️ 400kWh 초과 시 기본요금이 7,300원으로 급등합니다! 현재까지 ${400-kwh}kWh 남았어요.</div>`;
+  if(tier===2&&kwh>tier3Start-50) warnMsg=`<div class="warn-box">⚠️ ${tier3Start}kWh를 넘으면 기본요금이 7,300원으로 오르고 초과분에 kWh당 307.3원이 붙어요. 지금 ${tier3Start-kwh}kWh 남았어요.</div>`;
   if(tier===3) warnMsg=`<div class="warn-box">⚠️ 3단계 구간입니다. kWh당 307.3원으로 요금이 높습니다.</div>`;
 
   document.getElementById('tier-info').innerHTML=`
@@ -203,11 +206,13 @@ function calc(){
     <div class="result-row"><span>월 사용량</span><strong>${comma(kwh)} kWh</strong></div>
     <div class="result-row"><span>기본요금</span><strong>${won(base)}</strong></div>
     <div class="result-row"><span>전력량요금</span><strong>${won(Math.round(elec))}</strong></div>
-    <div class="result-row"><span>소계</span><strong>${won(subtotal)}</strong></div>
-    <div class="result-row"><span>전력산업기반기금 (3.7%)</span><strong>${won(fund)}</strong></div>
+    <div class="result-row"><span>기후환경요금 (kWh당 9원)</span><strong>${won(climate)}</strong></div>
+    <div class="result-row"><span>연료비조정요금 (kWh당 5원)</span><strong>${won(fuel)}</strong></div>
+    <div class="result-row"><span>전기요금계</span><strong>${won(subtotal)}</strong></div>
     <div class="result-row"><span>부가가치세 (10%)</span><strong>${won(vat)}</strong></div>
+    <div class="result-row"><span>전력산업기반기금 (2.7%)</span><strong>${won(fund)}</strong></div>
     <div class="result-row"><span>최종 청구 예상액</span><strong style="color:#0d9488">${won(total)}</strong></div>
-    <div style="font-size:11px;color:#888;margin-top:8px">※ ${summer?'여름 한시 완화':'일반'} 요금 기준. TV수신료 미포함. 실제 요금과 다를 수 있습니다.</div>
+    <div style="font-size:11px;color:#888;margin-top:8px">※ ${summer?'여름 한시 완화':'일반'} 요금 기준. 연료비조정요금은 분기마다 고시되며, TV수신료·복지할인은 미포함이에요.</div>
   `;
   document.getElementById('result').classList.add('show');
 }

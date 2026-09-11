@@ -18,9 +18,9 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="계산왕">
 <meta property="og:title" content="연차 계산기 2026 — 입사일 기준 연차 발생일수 계산 | 계산왕">
 <meta property="og:description" content="입사일로 연차 발생일수를 계산하세요. 2026년 근로기준법 기준.">
-<meta property="og:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta property="og:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
@@ -79,13 +79,13 @@ footer strong{color:#fff;}
 </head>
 <body>
 <header>
-  <a href="../" class="logo"><span>계산왕</span><span class="logo-badge">王</span></a>
+  <a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a>
   <a href="../" class="back-btn">← 전체 계산기</a>
   <button onclick="toggleDark()" id="darkToggle" class="dark-btn">🌙</button>
 </header>
 <div class="wrap"><div class="calc-card">
   <div class="card-hero">
-    <span class="card-tag">직장인</span>
+    <span class="card-tag">급여·근로</span>
     <h1>연차 계산기 📅</h1>
     <p>입사일 기준 연차 발생일수와 남은 연차를 계산합니다. 2026년 근로기준법 기준.</p>
   </div>
@@ -222,7 +222,29 @@ function calc(){
   let totalLeave=0;
   let detail='';
 
-  if(years<1){
+  if(basis==='fiscal'){
+    // 회계연도(1월 1일) 기준: 입사연도는 월차, 다음 해는 전년도 재직 비율만큼 15일을 비례 부여
+    const dayMs=1000*60*60*24;
+    const joinYear=joinDate.getFullYear(),n=baseDate.getFullYear()-joinYear;
+    if(n===0){
+      totalLeave=Math.min(diffMonths,11);
+      detail=`<div class="result-row"><span>입사연도 발생 연차</span><strong>월 1일 × ${diffMonths}개월 = ${totalLeave}일</strong></div>`;
+    }else if(n===1){
+      const joinLocal=new Date(joinYear,joinDate.getMonth(),joinDate.getDate());
+      const servedDays=Math.round((new Date(joinYear,11,31)-joinLocal)/dayMs)+1;
+      const prorated=Math.round(15*servedDays/365*10)/10;
+      const monthsLastYear=Math.min(Math.floor(servedDays/30.44),11);
+      const monthsThisYear=Math.max(0,Math.min(diffMonths,11)-monthsLastYear);
+      totalLeave=prorated+monthsThisYear;
+      detail=`<div class="result-row"><span>전년도 재직 비례 연차</span><strong>15일 × ${servedDays}/365 = ${prorated}일</strong></div>
+      <div class="result-row"><span>올해 발생한 입사 1년 미만 월차</span><strong>${monthsThisYear}일</strong></div>`;
+    }else{
+      const extra=Math.floor((n-1)/2);
+      totalLeave=Math.min(15+extra,25);
+      detail=`<div class="result-row"><span>회계연도 기준 ${n}년차</span><strong>기본 15일${extra?` + 가산 ${extra}일`:''}</strong></div>`;
+    }
+    detail+=`<div class="result-row"><span>퇴사 시 정산</span><strong>입사일 기준보다 적으면 차이를 정산해야 해요</strong></div>`;
+  }else if(years<1){
     // 1년 미만: 월 1일 (최대 11일)
     const monthLeave=Math.min(Math.floor(diffMonths),11);
     totalLeave=monthLeave;
@@ -251,7 +273,7 @@ function calc(){
   document.getElementById('res-detail').innerHTML=detail+
     `<div class="result-row"><span>사용 연차</span><strong style="color:#dc2626">-${used}일</strong></div>
     <div class="result-row"><span>남은 연차</span><strong style="color:#16a34a">${remain}일</strong></div>
-    <div style="font-size:11px;color:#888;margin-top:8px">※ 입사일 기준 계산. 회사 취업규칙에 따라 다를 수 있습니다.</div>`;
+    <div style="font-size:11px;color:#888;margin-top:8px">※ ${basis==='fiscal'?'회계연도(1월 1일) 기준':'입사일 기준'} 계산. 회사 취업규칙에 따라 다를 수 있습니다.</div>`;
   document.getElementById('result').classList.add('show');
 }
 // 기본값 오늘

@@ -118,7 +118,10 @@ const calculators={
   }
 };
 
-window.runCalc=()=>calculators[document.body.dataset.calc]?.();
+window.runCalc=()=>{
+  const key=document.body.dataset.calc;
+  (calculators[key]||window.EXTRA_CALCULATORS?.[key])?.();
+};
 window.toggleTheme=()=>{
   const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=next;

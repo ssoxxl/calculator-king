@@ -12,16 +12,15 @@
 <meta charset="UTF-8">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8390635644947402" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <title>커피값 절약 계산기 — 아끼면 10년 후 얼마? | 계산왕</title>
 <meta name="description" content="커피값 절약 계산기. 매일 커피 한 잔 값을 아끼면 1년·5년·10년 후 얼마가 될까? 복리 계산 포함.">
 <link rel="canonical" href="https://calc.ssoxxl.com/coffee-savings/">
 <meta property="og:type" content="website"><meta property="og:site_name" content="계산왕">
 <meta property="og:title" content="커피값 절약 계산기 — 매일 한 잔 아끼면 10년 후 얼마?">
 <meta property="og:description" content="매일 커피값 절약하면 1년·5년·10년 후 얼마가 될까? 복리까지 계산해드립니다.">
-<meta property="og:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta property="og:image" content="https://calc.ssoxxl.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.svg">
+<meta name="twitter:image" content="https://calc.ssoxxl.com/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="daumoa-verification" content="52638bd43577858cdf80a388c3bf173be6b9be4914b8bde1a3b347cf6786f5b4:Xj5dg0WfAX454QfLeg8nBA==">
 <script>
@@ -97,11 +96,11 @@ body{transition:background .3s,color .3s;}
 </style>
 </head>
 <body>
-<header><a href="../" class="logo"><span>계산왕</span><span class="logo-badge" style="background:#0a0a0f;color:#FFD700;font-family:'Courier New',monospace;border:1px solid #D4A017;">王</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
+<header><a href="../" class="logo"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" style="flex-shrink:0;color:#1f4fd1"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M9 29V14l6.5 5L20 10l4.5 9L31 14v15z" fill="#fff"/><path d="M15 21.5h10M15 25.5h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>계산왕</span></a><a href="../" class="back-btn">← 전체 계산기</a><button onclick="toggleDark()" id="darkToggle" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;margin-left:8px;">🌙</button>
 </header>
 <div class="wrap"><div class="calc-card">
   <div class="card-hero">
-    <span class="card-tag">재테크</span>
+    <span class="card-tag">금융·재테크</span>
     <h1>커피값 절약 계산기 ☕</h1>
     <p>매일 커피 한 잔 값을 아끼면 1년·5년·10년 후 얼마가 될까?</p>
   </div>
@@ -235,8 +234,8 @@ function calc(){
   `;
   // 재미있는 비교
   const funFacts=[
-    `${years}년 후 ${won(total)}으로 테슬라 주식 약 ${Math.floor(total/300000)}주를 살 수 있어요! (주당 30만원 기준)`,
-    `${years}년 후 ${won(total)}은 서울 평균 월세 ${Math.floor(total/700000)}달 치 금액이에요!`,
+    `${years}년 후 ${won(total)}이면 한 달 생활비 100만원 기준 ${Math.floor(total/1000000)}개월 치예요.`,
+    `${years}년 후 ${won(total)}은 월세 70만원 기준 ${Math.floor(total/700000)}달 치 금액이에요.`,
     `매일 커피 한 잔만 아껴도 ${years}년 후엔 ${won(total)}이 됩니다 ☕→💰`,
   ];
   document.getElementById('fun-fact').textContent=funFacts[Math.floor(Math.random()*funFacts.length)];
@@ -244,5 +243,6 @@ function calc(){
 }
 </script>
 <script src="../assets/money-inputs.js"></script>
+<script src="../assets/site.js"></script>
 </body></html>
 
