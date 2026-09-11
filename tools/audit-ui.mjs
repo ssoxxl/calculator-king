@@ -6,6 +6,7 @@ import {chromium} from 'file:///C:/Users/ddjjk/.cache/codex-runtimes/codex-prima
 import {readdir,mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import scenarios from './audit-ui-scenarios.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const outDir=process.argv[2]||path.join(root,'.audit-ui');
@@ -59,10 +60,13 @@ async function inspect(pagePath,ctxDef){
         else input.value=/금리|비율|세율|%/.test(label)?'5':/개월|기간|연수|나이|수량|일수|년|시간|kWh|cm|kg|km|분/.test(label)?'12':'3000000';
       });
     });
-    const buttons=await page.$$('button.btn, button.btn-calc, form#quickForm button, button[onclick*="calc" i]');
-    for(const b of buttons.slice(0,4)){try{if(await b.isVisible())await b.click({timeout:2000});}catch(e){}}
-    await page.waitForTimeout(250);
-    const result=await page.evaluate(()=>{
+    const clickCalc=async()=>{
+      const buttons=await page.$$('button.btn, button.btn-calc, form#quickForm button, button[onclick*="calc" i]');
+      for(const b of buttons.slice(0,4)){try{if(await b.isVisible())await b.click({timeout:2000});}catch(e){}}
+      await page.waitForTimeout(250);
+    };
+    await clickCalc();
+    const measure=()=>page.evaluate(()=>{
       const parse=c=>{const m=c.match(/rgba?\(([^)]+)\)/);if(!m)return null;const p=m[1].split(/[ ,/]+/).filter(Boolean).map(Number);return {r:p[0],g:p[1],b:p[2],a:p.length>3?p[3]:1};};
       const lum=({r,g,b})=>{const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);};return .2126*f(r)+.7152*f(g)+.0722*f(b);};
       const mix=(top,bottom)=>({r:top.r*top.a+bottom.r*(1-top.a),g:top.g*top.a+bottom.g*(1-top.a),b:top.b*top.a+bottom.b*(1-top.a),a:1});
@@ -127,12 +131,48 @@ async function inspect(pagePath,ctxDef){
       if(overflow>1){document.querySelectorAll('body *').forEach(el=>{const r=el.getBoundingClientRect();if(r.right>innerWidth+1&&r.width>0&&!el.closest('ins.adsbygoogle'))wide.push(describe(el)+` (right ${Math.round(r.right)})`);});}
       return {issues,overflow:Math.max(0,overflow),wide:wide.slice(0,8)};
     });
-    const severe=result.issues.filter(i=>i.severity==='severe');
-    if(shotAll||severe.length||result.overflow>1){
-      const file=`${(pagePath||'home').replace(/\//g,'_')}-${ctxDef.name}.png`;
-      await page.screenshot({path:path.join(outDir,file),fullPage:false}).catch(()=>{});
+    // 결과 상태 하나를 측정해 기록한다
+    const snap=async state=>{
+      await page.waitForTimeout(150);
+      const result=await measure();
+      const context=state?`${ctxDef.name}/${state}`:ctxDef.name;
+      if(shotAll||result.issues.some(i=>i.severity==='severe')||result.overflow>1){
+        const file=`${(pagePath||'home').replace(/\//g,'_')}-${context.replace(/[^\w가-힣-]+/g,'_')}.png`;
+        await page.screenshot({path:path.join(outDir,file),fullPage:false}).catch(()=>{});
+      }
+      report.push({page:pagePath||'(home)',context,errors:errors.splice(0),...result});
+    };
+    await snap('');
+    // 결과에 따라 색·화면이 바뀌는 페이지: 시나리오별 분기와, 데스크톱에서 선택지(select)마다 계산한 화면도 측정
+    const pageScenarios=scenarios[pagePath];
+    if(pageScenarios){
+      const fillAndCalc=async()=>{
+        await page.evaluate(()=>document.querySelectorAll('input').forEach(i=>{if(!i.value&&!i.disabled&&!['checkbox','radio','date','time'].includes(i.type))i.value='3000000';}));
+        await clickCalc();
+      };
+      const ctl={page,fillAndCalc,
+        fill:async values=>{for(const [id,v] of Object.entries(values)){const el=page.locator('#'+id);if(await el.evaluate(e=>e.tagName)==='SELECT')await el.selectOption(String(v));else await el.fill(String(v));await el.dispatchEvent('change');}},
+        click:async sel=>page.locator(`${sel} >> visible=true`).first().click({timeout:3000})
+      };
+      for(const [name,runScenario] of Object.entries(pageScenarios)){
+        try{await runScenario(ctl);await snap(name);}
+        catch(e){report.push({page:pagePath,context:`${ctxDef.name}/${name}`,errors:[...errors.splice(0),`시나리오 실패: ${e.message.split('\n')[0]}`],issues:[],overflow:0,wide:[]});}
+      }
+      if(ctxDef.viewport.width>=1000){
+        await page.reload({waitUntil:'domcontentloaded'});
+        for(const [si,sel] of (await page.$$('select')).entries()){
+          if(!await sel.isVisible())continue;
+          const original=await sel.inputValue();
+          for(const v of await sel.evaluate(s=>[...s.options].map(o=>o.value))){
+            if(v===original)continue;
+            await sel.selectOption(v);await sel.dispatchEvent('change');
+            await fillAndCalc();
+            await snap(`선택${si}=${v}`);
+          }
+          await sel.selectOption(original);await sel.dispatchEvent('change');
+        }
+      }
     }
-    report.push({page:pagePath||'(home)',context:ctxDef.name,errors,...result});
   }catch(e){
     report.push({page:pagePath||'(home)',context:ctxDef.name,errors:[...errors,'LOAD: '+e.message],issues:[],overflow:0,wide:[]});
   }

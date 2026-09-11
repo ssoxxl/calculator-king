@@ -112,6 +112,12 @@ html:not([data-theme="dark"]) [style*="color:#db2777"],html:not([data-theme="dar
 html:not([data-theme="dark"]) [style*="color:#ef4444"],html:not([data-theme="dark"]) [style*="color: rgb(239, 68, 68)"],html:not([data-theme="dark"]) [style*="color: rgb(248, 113, 113)"],html:not([data-theme="dark"]) [style*="color:#dc2626"],html:not([data-theme="dark"]) [style*="color: rgb(220, 38, 38)"]{color:#b91c1c!important}
 html:not([data-theme="dark"]) [style*="color: rgb(96, 165, 250)"],html:not([data-theme="dark"]) [style*="color:#2563eb"],html:not([data-theme="dark"]) [style*="color: rgb(37, 99, 235)"]{color:#1d4ed8!important}
 
+/* BMI 등급 글자(HTML에 hex로 들어감)와 선택된 프리셋 버튼 */
+html:not([data-theme="dark"]) [style*="color:#60a5fa"]{color:#1d4ed8!important}
+html:not([data-theme="dark"]) [style*="color:#10b981"]{color:#166534!important}
+html:not([data-theme="dark"]) [style*="color:#f87171"],html:not([data-theme="dark"]) [style*="color:#ef4444"]{color:#b91c1c!important}
+[data-theme="dark"] .preset-btn.on{color:#0e1014!important}
+
 /* 페이지 CSS에 직접 지정된 색: 증여세 비과세 안내, 스마트스토어 실수령액, 개인정보처리방침 링크 */
 .zero-box p{color:#166534!important}
 [data-theme="dark"] .zero-box p{color:#4ade80!important}
