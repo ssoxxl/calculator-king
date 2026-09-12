@@ -86,14 +86,14 @@
     box.hidden=false;
   })();
 
-  // 모바일은 검색 다음에 카테고리와 목록을 읽도록 DOM 순서도 맞춘다.
+  // 모바일은 카테고리 다음에 월별 추천과 빠른 계산을 보여준다.
   const mobileLayout=matchMedia('(max-width:640px)');
   const quick=$('.quick'),directory=$('.directory'),season=$('.season');
   const quickSlot=document.createComment('quick position');
   const directorySlot=document.createComment('directory position');
   quick.before(quickSlot);directory.before(directorySlot);
   function arrangeMobile(){
-    if(mobileLayout.matches){season.before(directory,quick);}
+    if(mobileLayout.matches){season.after(quick,directory);}
     else{quickSlot.after(quick);directorySlot.after(directory);}
   }
   arrangeMobile();mobileLayout.addEventListener('change',arrangeMobile);
