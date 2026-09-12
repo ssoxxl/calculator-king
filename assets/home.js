@@ -86,11 +86,30 @@
     box.hidden=false;
   })();
 
+  // 모바일은 검색 다음에 카테고리와 목록을 읽도록 DOM 순서도 맞춘다.
+  const mobileLayout=matchMedia('(max-width:640px)');
+  const quick=$('.quick'),directory=$('.directory'),season=$('.season');
+  const quickSlot=document.createComment('quick position');
+  const directorySlot=document.createComment('directory position');
+  quick.before(quickSlot);directory.before(directorySlot);
+  function arrangeMobile(){
+    if(mobileLayout.matches){season.before(directory,quick);}
+    else{quickSlot.after(quick);directorySlot.after(directory);}
+  }
+  arrangeMobile();mobileLayout.addEventListener('change',arrangeMobile);
+  document.querySelectorAll('.dir').forEach(dir=>{
+    if(dir.querySelectorAll('.dir-list li').length<=7){
+      dir.classList.add('open');
+      const more=dir.querySelector('.dir-more');if(more)more.hidden=true;
+    }
+  });
+
   // 카테고리 목록 더 보기
   document.querySelectorAll('.dir-more').forEach(btn=>btn.addEventListener('click',()=>{
     const open=btn.closest('.dir').classList.toggle('open');
     btn.textContent=open?'접기':btn.dataset.label;
     btn.setAttribute('aria-expanded',String(open));
+    if(!open)btn.closest('.dir').scrollIntoView({block:'start',behavior:'smooth'});
   }));
 
   // 연봉 실수령액 빠른 계산 (연봉 실수령액 계산기와 같은 방식: 비과세 20만원, 간이세액표)
