@@ -36,6 +36,7 @@
   color:var(--muted, var(--sub, #5c6370));-webkit-tap-highlight-color:transparent}
 .gw-tabbar a svg{width:21px;height:21px}
 .gw-tabbar a.on{color:var(--accent, var(--brand, #1f4fd1))}
+.gw-recent-empty{font-size:13px;color:var(--muted, var(--sub, #5c6370))}
 .gw-tabbar a:active{background:color-mix(in srgb, var(--accent, var(--brand, #1f4fd1)) 10%, transparent)}
 @media(max-width:760px){
   .gw-tabbar{display:flex}
@@ -61,4 +62,19 @@
     if(focusSearch())e.preventDefault();
   });
   if(new URLSearchParams(location.search).get('focus')==='search')focusSearch();
+
+  // 최근 본 계산이 없으면 영역이 숨겨져 있어 눌러도 아무 일이 없어 보인다. 빈 상태 안내를 띄운다
+  const showRecent=()=>{
+    const box=document.getElementById('recent');
+    if(!box)return false;
+    const links=box.querySelector('.recent-links');
+    if(links&&!links.children.length)links.innerHTML='<span class="gw-recent-empty">아직 최근 본 계산기가 없어요. 계산기를 열어보면 여기에 모여요.</span>';
+    box.hidden=false;
+    box.scrollIntoView({block:'center',behavior:'smooth'});
+    return true;
+  };
+  nav.querySelector('[data-tab="recent"]').addEventListener('click',e=>{
+    if(showRecent())e.preventDefault();
+  });
+  if(location.hash==='#recent')showRecent();
 })();

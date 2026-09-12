@@ -126,7 +126,6 @@ const html=`<!DOCTYPE html>
 <main>
   <section class="hero">
     <div class="hero-main">
-      <p class="eyebrow">생활 계산기 ${calculators.length}개 · 계산식과 출처 공개</p>
       <h1>생활에 필요한 계산을<br>한곳에서 바로</h1>
       <p class="lead">월급과 세금부터 대출, 집, 날짜와 건강까지. 필요한 계산을 검색 한 번으로 찾고, 계산식과 기준 출처를 함께 확인하세요.</p>
       <form class="search" id="searchForm" role="search" autocomplete="off">
