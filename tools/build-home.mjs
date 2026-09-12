@@ -164,7 +164,7 @@ const html=`<!DOCTYPE html>
 
   ${adUnit}
 
-  <section class="directory" aria-label="전체 계산기">
+  <section class="directory" id="calculators" aria-label="전체 계산기">
     <div class="section-head"><h2>전체 계산기</h2><p>카테고리별로 모든 계산기를 모았어요.</p></div>
     ${directory}
   </section>
@@ -195,6 +195,7 @@ const html=`<!DOCTYPE html>
 <script type="application/json" id="seasonData">${seasonData}</script>
 <script src="/assets/rates.js"></script>
 <script src="/assets/home.js"></script>
+<script src="/assets/tabbar.js" defer></script>
 </body>
 </html>
 `;

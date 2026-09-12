@@ -328,6 +328,26 @@ window.EXTRA_CALCULATORS={
     const total=payment*n+balloon;
     render(won(payment)+' / 월',[['할부원금',won(principal)],['할부 기간',n+'개월'],['마지막 달 유예금',balloon?won(balloon):'없음'],['총 이자',won(total-principal)],['할부 총 납부액',won(total)],['선수금 포함 총비용',won(total+down)]]);
   },
+  'car-tax':()=>{
+    const type=selected('type'),cc=positive('cc'),age=positive('age'),T=RATES.carTax;
+    if(type!=='ev'&&!cc){alert('배기량을 입력해 주세요.');return;}
+    // 배기량 구간별 1cc당 세액 (전기·수소차는 배기량이 없어 정액)
+    const base=type==='ev'?T.evFlat:Math.floor(cc*(type==='business'?T.business:T.private).find(([limit])=>cc<=limit)[1]);
+    // 차령 경감: 3년째 5%부터 매년 5%씩, 12년째 이상 50% 한도
+    const discount=age>=T.ageStartYear?Math.min(T.ageMax,(age-T.ageStartYear+1)*T.ageStep):0;
+    const carTax=Math.floor(base*(1-discount)/10)*10;
+    const edu=Math.floor(carTax*T.eduRatio/10)*10,total=carTax+edu;
+    render(won(total)+' / 년',[
+      ['차종',{private:'비영업용 승용차',business:'영업용 승용차',ev:'전기·수소차 (비영업용)'}[type]],
+      ...(type==='ev'?[]:[['배기량',number(cc)+'cc'],['배기량 기준 세액',won(base)]]),
+      ['차령 경감',discount?`${number(discount*100)}% (-${won(base-carTax)})`:'해당 없음 (2년 이하)'],
+      ['자동차세',won(carTax)],
+      ['지방교육세 (30%)',won(edu)],
+      ['6월분 (1기분)',won(Math.floor(total/2))],
+      ['12월분 (2기분)',won(total-Math.floor(total/2))],
+      ['연납 할인','1월에 한 번에 내면 공제받아요 (자동차세 연납 할인 계산기에서 확인)']
+    ]);
+  },
   'jongbu-tax':()=>{
     if(!requirePositive(['price']))return;
     const price=positive('price'),type=selected('houses'),prevTotal=positive('prevTotal');

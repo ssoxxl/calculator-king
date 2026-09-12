@@ -29,6 +29,14 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncButton);
   else syncButton();
 
+  // 모바일 하단 탭바 (페이지마다 스크립트를 넣지 않고 여기서 한 번에 불러온다)
+  if(!document.querySelector('script[src$="tabbar.js"]')){
+    const tab=document.createElement('script');
+    tab.src='/assets/tabbar.js';
+    tab.defer=true;
+    document.head.appendChild(tab);
+  }
+
   // 최근 본 계산기 (홈 화면에 표시)
   const slug=location.pathname.split('/').filter(Boolean)[0];
   if(slug&&document.querySelector('.calc-card')){

@@ -80,7 +80,7 @@
     let slugs=[];
     try{slugs=JSON.parse(localStorage.getItem('gyesanwang_recent')||'[]');}catch(e){}
     const bySlug=Object.fromEntries(data.map(d=>[d.s,d]));
-    const items=slugs.map(s=>bySlug[s]).filter(Boolean).slice(0,6);
+    const items=slugs.map(s=>bySlug[s]).filter(Boolean).slice(0,3); // 모바일에서 한 줄에 들어가도록 3개만
     if(!items.length)return;
     box.querySelector('.recent-links').innerHTML=items.map(i=>`<a href="/${i.s}/">${esc(i.n.replace(/ 계산기$/,''))}</a>`).join('');
     box.hidden=false;
